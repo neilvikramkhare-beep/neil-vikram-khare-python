@@ -1,0 +1,12 @@
+a=2;
+b=7;
+sum=a+b;
+sub=a-b;
+prod=a*b;
+div=a/b;
+mod=a%b;
+print(sum);
+print(sub);
+print(prod);
+print(div);
+print(mod);
