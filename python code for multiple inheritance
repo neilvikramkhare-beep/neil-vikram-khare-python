@@ -1,0 +1,11 @@
+class Father:
+    def skill1(self):
+        print("Father's skill: Gardening")
+class Mother:
+    def skill2(self):
+        print("Mother's skill: Cooking")
+class Child(Father, Mother):
+    pass
+child_obj = Child()
+child_obj.skill1()
+child_obj.skill2()
