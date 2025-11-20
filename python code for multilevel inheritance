@@ -1,0 +1,25 @@
+class Grandparent:
+    def __init__(self, name):
+        self.grandparent_name = name
+        print(f"Grandparent {self.grandparent_name} created.")
+    def display_grandparent_info(self):
+        print(f"Grandparent Name: {self.grandparent_name}")
+class Parent(Grandparent):
+    def __init__(self, grandparent_name, name):
+        super().__init__(grandparent_name)  
+        self.parent_name = name
+        print(f"Parent {self.parent_name} created.")
+    def display_parent_info(self):
+        print(f"Parent Name: {self.parent_name}")
+class Child(Parent):
+    def __init__(self, grandparent_name, parent_name, name):
+        super().__init__(grandparent_name, parent_name)  
+        self.child_name = name
+        print(f"Child {self.child_name} created.")
+    def display_child_info(self):
+        print(f"Child Name: {self.child_name}")
+my_child = Child("Arthur", "Brenda", "Charles")
+print("\nDisplaying Information")
+my_child.display_grandparent_info()
+my_child.display_parent_info()
+my_child.display_child_info()
