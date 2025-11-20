@@ -1,0 +1,12 @@
+list1 = [876, 765, 76, 654]
+tuple1 = {"kjhgf", "oiuytr", "oiuytr", "mnbvcb", "nbvcx"}
+print(tuple1)
+print(list1)
+list1.append(67)
+print(list1)
+list1.sort(reverse=True)
+print(list1)
+list1.reverse()
+print(list1)
+list1.sort()
+print(list1)
