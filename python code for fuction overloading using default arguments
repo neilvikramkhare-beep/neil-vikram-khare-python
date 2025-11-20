@@ -1,0 +1,9 @@
+def display_name(name):
+    print(f"Name: {name}")
+def display_coordinates(x, y):
+    print(f"Coordinates: ({x}, {y})")
+def display_city(city):
+    print(f"City: {city}")
+display_name("Charlie")
+display_coordinates(10, 20)
+display_city(city="New York")
