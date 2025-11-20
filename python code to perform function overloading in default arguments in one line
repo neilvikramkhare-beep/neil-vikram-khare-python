@@ -1,0 +1,12 @@
+def display_info_explicit(name=None, x=None, y=None, city=None):
+    if name is not None:
+        print(f"Name: {name}")
+    elif x is not None and y is not None:
+        print(f"Coordinates: ({x}, {y})")
+    elif city is not None:
+        print(f"City: {city}")
+    else:
+        print("Unknown information.")
+display_info_explicit(name="Charlie")
+display_info_explicit(x=10, y=20)
+display_info_explicit(city="New York")
