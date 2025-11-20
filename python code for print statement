@@ -1,0 +1,11 @@
+name="neil";
+age=19;
+price=560;
+school="jnana prabhodini";
+college="mit wpu";
+print(name);
+print(age);
+print(school);
+print(price);
+print(college);
+print("My hobby is playing cricket.");
