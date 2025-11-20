@@ -1,0 +1,26 @@
+def linear_search(arr, target):
+    """
+    Performs a linear search on a list to find a target value.
+    Args:
+        arr (list): The list to search through.
+        target: The value to search for.
+    Returns:
+        int: The index of the target value if found, otherwise -1.
+    """
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i 
+    return -1  
+my_list = [5, 3, 8, 6, 7, 2, 1]
+search_value = 6
+result_index = linear_search(my_list, search_value)
+if result_index != -1:
+    print(f"Element {search_value} found at index {result_index}")
+else:
+    print(f"Element {search_value} not found in the list")
+search_value_not_present = 10
+result_index_not_present = linear_search(my_list, search_value_not_present)
+if result_index_not_present != -1:
+    print(f"Element {search_value_not_present} found at index {result_index_not_present}")
+else:
+    print(f"Element {search_value_not_present} not found in the list")
