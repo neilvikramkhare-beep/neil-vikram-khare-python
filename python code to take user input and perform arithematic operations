@@ -1,0 +1,12 @@
+first=int(input("enter first:"));
+second=int(input("enter second:"));
+print("sum=",first+second);
+print("sub=",first-second);
+print("prod=",first*second);
+print("div=",first/second);
+print("mod=",first%second);
+print("avg=",first+second/2);
+if b > a:
+    print("b is greater than a")
+else: 
+    print("a is greater than b")
