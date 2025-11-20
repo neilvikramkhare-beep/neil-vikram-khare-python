@@ -1,0 +1,31 @@
+import random
+def create_maze(width, height):
+    """
+    Generates a maze using a recursive Depth-First Search (DFS) algorithm.
+    '#' represents a wall, ' ' represents a path.
+    """
+    maze = [['#' for _ in range(width)] for _ in range(height)]
+    directions = [(0, 2), (0, -2), (2, 0), (-2, 0)] 
+    def carve_path(x, y):
+        maze[y][x] = ' ' 
+        random.shuffle(directions) 
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < width and 0 <= ny < height and maze[ny][nx] == '#':
+                maze[y + dy // 2][x + dx // 2] = ' '
+                carve_path(nx, ny) 
+    start_x = random.randrange(1, width, 2)
+    start_y = random.randrange(1, height, 2)
+    carve_path(start_x, start_y)
+    maze[1][1] = 'S' 
+    maze[height - 2][width - 2] = 'E' 
+    return maze
+def print_maze(maze):
+    """Prints the maze to the console."""
+    for row in maze:
+        print("".join(row))
+if __name__ == "__main__":
+    maze_width = 21  
+    maze_height = 11 
+    generated_maze = create_maze(maze_width, maze_height)
+    print_maze(generated_maze)
