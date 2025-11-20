@@ -1,0 +1,13 @@
+my_dict =
+ {
+  "name": "Alice",
+  "age": 30,
+  "city": "New York"
+}
+another_dict = dict(name="Bob", age=25, city="London")
+yet_another_dict = dict([("name", "Charlie"), ("age", 35), ("city", "Paris")])
+new_dict = dict(name="Suyash", age=73, city="Delhi")
+yet_new_dict = dict("name"="Viraj"),("age",76),("city","Mumbai")
+print(my_dict)
+print(another_dict)
+print(yet_another_dict)
