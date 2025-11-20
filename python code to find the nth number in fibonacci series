@@ -1,0 +1,10 @@
+def fibonacci_recursive(n):
+    """Calculates the nth Fibonacci number using recursion."""
+    if n < 0:
+        print("Input is incorrect")
+        return None
+    elif n <= 1:
+        return n
+    else:
+        return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+print(fibonacci_recursive(9)) 
