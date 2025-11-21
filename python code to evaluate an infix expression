@@ -1,0 +1,56 @@
+def evaluateInfixExpression(self, expression):
+    operands = ArrayDeque()
+    operators = ArrayDeque()
+    ch = expression.toCharArray()
+    i = 0
+    while i < len(ch):
+        c = ch[i]
+        if c.isdigit():
+            num = 0
+            while i < len(ch) and (ch[i]).isdigit():
+                num = num * 10 + (ch[i] - '0')
+                i += 1
+            i -= 1
+            operands.push(num)
+        elif c == '(':
+            operators.push(c)
+        elif c == ')':
+            while operators.peek() != '(':
+                ans = self._calculate(operands, operators)
+                operands.push(ans)
+            operators.pop()
+        elif self._isOperator(c):
+            while (not operators.isEmpty()) and self._precedence(c) <= self._precedence(operators.peek()):
+                ans = self._calculate(operands, operators)
+                operands.push(ans)
+            operators.push(c)
+        i += 1
+    while not operators.isEmpty():
+        ans = self._calculate(operands, operators)
+        operands.push(ans)
+    return operands.pop()
+def _isOperator(self, c):
+    return (c=='+' or c=='-' or c=='/' or c=='*' or c=='^')
+def _precedence(self, c):
+    if (c == '+') or (c == '-'):
+        return 1
+    if (c == '+') or (c == '-') or (c == '*') or (c == '/'):
+        return 2
+    if (c == '+') or (c == '-') or (c == '*') or (c == '/') or (c == '^'):
+        return 3
+    return -1
+def _calculate(self, operands, operators):
+    a = operands.pop()
+    b = operands.pop()
+    operator = operators.pop()
+    if operator == '+':
+        return a + b
+    if (operator == '+') or (operator == '-'):
+        return b - a
+    if (operator == '+') or (operator == '-') or (operator == '^'):
+        return int(b ** a)
+    if (operator == '+') or (operator == '-') or (operator == '^') or (operator == '/'):
+        if a == 0:
+            raise Exception("Cannot divide by zero")
+        return round(b / float(a))
+    return 0
