@@ -1,0 +1,14 @@
+a=(float(input("enter the square side:"))); 
+print("Area of square=",a*a);
+l=(int(input("enter the length of rectangle:")));
+b=(int(input("enter the breath of rectangle:")));
+print("Area of rectangle=",l*b);
+m=(int(input("enter the length of triangle:")));
+n=(int(input("enter the breath of triangle:")));
+print("Area of triangle=",0.5*l*b);
+r=(int(input("enter the radius of circle:")));
+print("Area od circle=",3.14*r*r);
+c=(int(input("enter the length of minor axis:")));
+e=(int(input("enter the length of major axis:")));
+print("Area of elipse:",3.14*c*e);
+
