@@ -1,9 +1,4 @@
 def selection_sort(arr):
-    """
-    Sorts a list of numbers using the Selection Sort algorithm.
-    Args:
-        arr: The list of numbers to be sorted.
-    """
     n = len(arr)
     for i in range(n):
         min_index = i
