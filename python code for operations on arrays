@@ -1,0 +1,22 @@
+a=[7,43,98,32,76];
+print(a);
+addition=a[0]+a[2];
+prod=a[4]*a[0];
+sub=a[4]-a[2];
+div=a[2]/a[3];
+print(addition);
+print(prod);
+print(sub);
+print(div);
+temp = a[4]; a[4] = a[2]; a[2] = temp
+print(f"a[4]: {a[4]}, a[2]: {a[2]}")
+a.append(65);
+a.remove(98);
+a.append(52);
+a.remove(43);
+a.append(75);
+a.append(36);
+a.append(47);
+a.remove(76);
+print("List after append and remove:", a);
+print("\n");
