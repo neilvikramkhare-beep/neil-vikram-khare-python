@@ -1,0 +1,9 @@
+import pandas as pd
+data = {
+    "names": ["rohan", "hardik", "suresh"],
+    "duration": [87, 43, 53]
+}
+
+df = pd.DataFrame(data)
+print(df)
+print(df["names"].iloc[1])
