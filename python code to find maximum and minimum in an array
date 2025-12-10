@@ -1,0 +1,6 @@
+a=[]
+for i in range(10):
+    n=int(input("enter the numbers:"))
+    a.append(n)
+    print(max(a))
+    print(min(a))
