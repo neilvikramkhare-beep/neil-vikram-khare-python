@@ -1,0 +1,17 @@
+a = []
+for i in range(6): 
+    while True:
+        try:
+            n = int(input(f"Enter number {i+1}: ")) 
+            a.append(n)
+            break 
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
+n = len(a)
+for i in range(n - 1):
+    for j in range(n - i - 1):
+        if a[j] > a[j+1]:  
+            a[j], a[j+1] = a[j+1], a[j] 
+print("\nSorted list in ascending order:")
+for element in a:
+    print(element)
