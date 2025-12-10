@@ -1,0 +1,22 @@
+a=(float(input("enter the cube side:"))); 
+print("Volume of cube=",a*a*a);
+l=(int(input("enter the length of cuboid:")));
+b=(int(input("enter the breath of cuboid:")));
+h=(int(input("enter the height of cuboid:")));
+print("Voloume of cuboid=",l*b*h);
+s=(int(input("enter the height of cylinder:")));
+m=(float(input("enter the radius of cylinder:")));
+print("Volume of cylinder=",3.14*m*m*s);
+n=(int(input("enter the height of cone:")));
+v=(int(input("enter the raius of cone:")));
+print("Volume of cone=",1/3*3.14*v*v*n);
+d=(int(input("enter the radius of sphere:")));
+print("Volume of sphere:",3.14*4/3*d*d*d);
+p=(int(input("enter the radius of hemisphere:")));
+print("Volume of hemisphere:",2/3*3.14*p*p*p);
+x=(int(input("enter the radius of top face:")));
+y=(int(input("enter the radius of bottom face:")));
+o=(int(input("enter the height of frustum:")));
+print("Volume of frustum:",1/3*3.14*o*(x*x+y*y)+(x+y));
+
+
