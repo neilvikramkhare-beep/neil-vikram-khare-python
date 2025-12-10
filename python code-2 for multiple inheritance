@@ -1,0 +1,13 @@
+class Father:
+    def skill1(self):
+        print("Father's skill: Gardening")
+class Mother:
+    def skill2(self):
+        print("Mother's skill: Cooking")
+class Child(Father, Mother):
+    def skill3(self):
+        print("Child's skill:Drawing")
+child_c = Child()
+child_c.skill1()
+child_c.skill2()
+child_c.skill3()
