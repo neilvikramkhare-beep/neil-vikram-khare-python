@@ -1,0 +1,11 @@
+class student:
+    def __init__(self, fullname, marks):#parameterized constructor
+        self.name = fullname
+        self.marks = marks
+        print("creating new student in the database.")
+s1 = student("Siraj", 78)
+print(s1.name)
+print(s1.marks)
+s2 = student("Aryan", 92) 
+print(s2.name)
+print(s2.marks)
