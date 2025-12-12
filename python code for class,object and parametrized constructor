@@ -1,0 +1,15 @@
+class student:
+    collegename = "MIT college"
+    name = "anonymous"
+    def __init__(self, fullname, marks):  
+        self.name = fullname
+        self.marks = marks
+    def getavg(self):  
+        sumval = 0  
+        for val in self.marks:
+            sumval += val
+        print("Hi", self.name, "your average score is", sumval / len(self.marks))
+s1 = student("Neil Khare", [90, 93, 97])
+s1.getavg()
+s1.name = "virat"
+s1.getavg()
