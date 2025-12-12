@@ -1,0 +1,18 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+data = {
+    'employee name': ['rahul', 'missing1', 'sameer', 'missing2', 'viraj'],
+    'ID': [76, 43, 53, 999, 888],
+    'salary': [67000, 65000, 42000, 50000, 60000]
+}
+df = pd.DataFrame(data)
+plt.figure(figsize=(10, 6))
+plt.pie(
+    df['salary'],
+    labels=df['employee name'],
+    autopct='%1.1f%%', 
+    startangle=90
+)
+plt.title('Employee Salary Distribution')
+plt.show()
