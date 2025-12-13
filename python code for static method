@@ -1,0 +1,14 @@
+class Student:
+    def __init__(self, fullname, marks):
+        self.name = fullname
+        self.marks = marks
+    @staticmethod
+    def getavg(name, marks):
+        totalsum = sum(marks)
+        average = totalsum / len(marks)
+        print("Hi", name, "your average score is:", average)
+s1 = Student("Neil khare", [87, 90, 98])
+Student.getavg(s1.name, s1.marks)
+s1.name = "Shrirang shingane"
+Student.getavg(s1.name, s1.marks)
+
