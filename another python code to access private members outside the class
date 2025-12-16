@@ -1,0 +1,9 @@
+class Person:
+    _name = "Rajesh"
+    def _hello(self):
+        print("Hello friend")
+    def welcome(self):
+        self._hello()
+p1 = Person()
+p1.welcome()
+print(p1.welcome())
