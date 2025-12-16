@@ -1,0 +1,22 @@
+class Car:
+    color = "Red"
+    def start(self):
+        print(f"{self.name} has been started.") 
+    def stop(self):
+        print(f"{self.name} has been stopped.")
+class Toyota(Car):
+    def __init__(self, name):
+        super().__init__() 
+        self.name = name
+        class Delivery(Toyota):
+            def __intit__(self,type):
+                self.type=type
+                car1=Delivery("Truck")
+car1 = Toyota("Fortuner")
+car2 = Toyota("Rapido")
+print(f"{car1.name} color: {car1.color}")
+print(f"{car2.name} color: {car2.color}")
+car1.start() 
+car1.stop()
+car2.start()
+car2.stop()
