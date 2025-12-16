@@ -1,0 +1,9 @@
+class account:
+    def __init__(self, accnumber, accpassword):
+        self.accnumber = accnumber
+        self.accpassword = accpassword
+    def reset_password(self):
+        print(self.accpassword)
+acc1 = account(738273, "djfhkjfhn@9898") 
+print(acc1.accnumber)
+print(acc1.reset_password())
