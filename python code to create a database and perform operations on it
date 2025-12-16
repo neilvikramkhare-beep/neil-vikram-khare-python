@@ -1,0 +1,54 @@
+print("Database to show that SQL can be eliminated")
+class College:
+    def __init__(self, name, age, post, salary, doj):
+        self.name = name
+        self.age = age
+        self.post = post
+        self.salary = salary
+        self.doj = doj
+class Location:
+    def __init__(self, city, country):
+        self.city = city
+        self.country = country
+class EmployeeDetails:
+    def __init__(self, college_info, location_info):
+        self.college_info = college_info
+        self.location_info = location_info
+    def print_combined_details(self):
+        print(f"{self.college_info.name}|{self.college_info.age}|{self.college_info.post}|{self.college_info.salary}|{self.college_info.doj}|{self.location_info.city}|{self.location_info.country}|")
+if __name__ == "__main__":
+    is_authorized = True
+    if is_authorized:
+        print("Access Granted. Displaying Employee Details:")
+        college_data = [
+            College("Suyash", 43, "Admin", 45000, "Monday"),
+            College("Amit", 54, "Supervisor", 68000, "Wednesday"),
+            College("Pravin", 45, "Staff", 32000, "Saturday"),
+            College("Rahul", 32, "Manager", 80000, "Tuesday"),
+            College("Amey", 46, "Synchronizer", 64000, "Thursday"),
+            College("Aditya", 62, "HOD", 90000, "Monday"),
+            College("Shyama", 20, "Clerk", 29000, "Friday"),
+            College("Farida", 29, "Advisor", 26000, "Wednesday"),
+            College("Mrunal", 72, "Query", 10000, "Thursday"),
+            College("Ragini", 38, "Database", 83000, "Saturday")
+        ]
+        location_data = [
+            Location("Pune", "India"),
+            Location("Mumbai", "India"),
+            Location("Nagpur", "India"),
+            Location("Delhi", "India"),
+            Location("Bangalore", "India"),
+            Location("Chennai", "India"),
+            Location("Kolkata", "India"),
+            Location("Hyderabad", "India"),
+            Location("Ahmedabad", "India"),
+            Location("Jaipur", "India")
+        ]
+        combined_details = []
+        for i in range(len(college_data)):
+            combined_details.append(EmployeeDetails(college_data[i], location_data[i]))
+        for employee in combined_details:
+            employee.print_combined_details()
+    else:
+        print("Access Revoked. User is not authorized.")
+
