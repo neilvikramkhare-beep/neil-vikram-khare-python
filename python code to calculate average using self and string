@@ -1,0 +1,19 @@
+class student:
+    def __init__(self, phy, chem, math):
+        self.phy = phy
+        self.chem = chem
+        self.math = math
+        self.percentage = None 
+    def calc_percentage(self):
+        self.percentage = str((self.phy + self.chem + self.math) / 3) + "%"
+stu1 = student(76, 54, 54)
+stu1.phy = 87
+stu1.chem = 46
+stu1.math = 97
+print(stu1.phy)
+print(stu1.chem)
+print(stu1.math)
+stu1.calc_percentage()
+print(stu1.percentage)
+
+            
