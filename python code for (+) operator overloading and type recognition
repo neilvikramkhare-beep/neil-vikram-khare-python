@@ -1,0 +1,7 @@
+print("apna"+"college")
+print(87+89)
+print([67,65,12]+[34,87,90])
+print(type([34,87,90]))
+print(type(76))
+print(type("apna"))
+print(type(24.56))
