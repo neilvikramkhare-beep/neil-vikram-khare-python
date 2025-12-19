@@ -1,0 +1,12 @@
+import random
+target = random.randint(1,100)
+while True:
+    userChoice = int(input("guess the target: "))
+    if(userChoice == target) :
+        print("Success:answer is correct.")
+        break
+    elif(userChoice < target):
+        print("Choose a smaller value.")
+    else:
+        print("Choose a greater value.")
+print("GAME OVER")
