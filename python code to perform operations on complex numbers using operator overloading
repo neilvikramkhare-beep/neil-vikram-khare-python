@@ -1,0 +1,31 @@
+class Complex:
+    def __init__(self,real,img):
+        self.real=real
+        self.img=img
+        def showNumber(self):
+            print(self.real,"i"+self.img,"j")
+            def __add__(self,num2):
+                newReal=self.real+num2.real
+                newImg=self.img+num2.img
+                return Complex(newReal, newImg)
+                newReal=self.real-num2.real
+                newImg=self.img-num2.img
+                return Complex(newReal, newImg)
+                newReal=self.real*num2.real
+                newImg=self.img*num2.img
+                return Complex(newReal, newImg)
+                newReal=self.real/num2.real
+                newImg=self.img/num2.img
+                return Complex(nemReal, newImg)
+                num1 = Complex(76,43)
+                num1.showNumber()
+                num2 = Complex(56,98)
+                num2.showNumber()
+                num3 = num1+num2
+                num3.showNumber()
+                num4 = Complex(65,68)
+                num4.showNumber()
+                num5 = Complex(45,78)
+                num5.showNumber()
+                num6 = Complex(90,79)
+                num6.showNumber()
