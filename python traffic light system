@@ -1,0 +1,11 @@
+print("TRAFFIC LIGHT SYSTEM")
+light=input("enter the signal light:")
+go = False
+if light=="red":
+    print("Stop")
+if light=="red" and  go:
+    print("Pay 5000")
+if light=="green":
+    print("Go")
+if light=="yellow":
+    print("Get ready")
