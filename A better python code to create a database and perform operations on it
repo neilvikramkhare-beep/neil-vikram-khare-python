@@ -1,0 +1,76 @@
+print("Python code to create a database and perform operations on it to eliminate SQL.")
+import subprocess
+class College:
+    def __init__(self, name, age, post, salary, doj):
+        self.name = name
+        self.age = age
+        self.post = post
+        self.salary = salary
+        self.doj = doj
+class Location:
+    def __init__(self, city, country):
+        self.city = city
+        self.country = country
+class EmployeeDetails:
+    def __init__(self, college_info, location_info):
+        self.college_info = college_info
+        self.location_info = location_info
+    def print_combined_details(self):
+        print(f"{self.college_info.name:<12}|{self.college_info.age:<4}|"
+              f"{self.college_info.post:<12}|{self.college_info.salary:<8}|"
+              f"{self.college_info.doj:<10}|{self.location_info.city:<12}|"
+              f"{self.location_info.country:<8}|")
+def display_tables_separately(college_list, location_list):
+    print("\n" + "=" * 52)
+    print("Separate College Data Table")
+    print("=" * 52)
+    print(f"{'Name':<12}|{'Age':<4}|{'Post':<12}|{'Salary':<8}|{'DOJ':<10}")
+    print("-" * 52)
+    for college in college_list:
+        print(f"{college.name:<12}|{college.age:<4}|{college.post:<12}|{college.salary:<8}|{college.doj:<10}")
+    print("\n" + "=" * 22)
+    print("Separate Location Data Table")
+    print("=" * 22)
+    print(f"{'City':<12}|{'Country':<8}")
+    print("-" * 22)
+    for location in location_list:
+        print(f"{location.city:<12}|{location.country:<8}")
+def join_and_display_tables(college_list, location_list):
+    print("\n" + "=" * 75)
+    print("Joined Employee Details Table")
+    print("=" * 75)
+    print(f"{'Name':<12}|{'Age':<4}|{'Post':<12}|{'Salary':<8}|{'DOJ':<10}|{'City':<12}|{'Country':<8}|")
+    print("-" * 75)
+for college_info, location_info in zip(college_list, location_list):
+    combined_detail = EmployeeDetails(college_info, location_info)
+    combined_detail.print_combined_details()
+def call_external_subprogram(language, script_path):
+    print(f"\nExecuting {language} Sub-program ")
+    try:
+        if language.lower() == "python":
+            subprocess.run(["python", script_path], check=True)
+        elif language.lower() == "java":
+            subprocess.run(["java", script_path], check=True)
+        elif language.lower() == "sql":
+            subprocess.run(["sqlite3", "my_database.db", f".read {script_path}"], check=True)
+        else:
+            print("Unsupported language.")
+    except Exception as e:
+        print(f"Could not execute {script_path}: {e}")
+college_data = [
+    College("Shyama", 20, "Clerk", 29000, "Friday"),
+    College("Farida", 29, "Advisor", 26000, "Wednesday"),
+    College("Mrunal", 72, "Query", 10000, "Thursday"),
+    College("Ragini", 38, "Database", 83000, "Saturday"),
+    College("Sara", 38, "Database", 83000, "Saturday")
+]
+location_data = [
+    Location("Pune", "India"),
+    Location("Mumbai", "India"),
+    Location("Nagpur", "India"),
+    Location("Delhi", "India"),
+    Location("Bangalore", "India")
+]
+if __name__ == "__main__":
+    display_tables_separately(college_data, location_data)
+    join_and_display_tables(college_data, location_data)
