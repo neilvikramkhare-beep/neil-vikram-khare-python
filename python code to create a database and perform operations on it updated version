@@ -1,0 +1,77 @@
+class College:
+    def __init__(self, n, a, p, s, doj):
+        self.name = n
+        self.age = a
+        self.post = p
+        self.salary = s
+        self.DOJ = doj
+class Location:
+    def __init__(self, city, cntry):
+        self.city = city
+        self.country = cntry
+class EmployeeDetails:
+    def __init__(self, c, l):
+        self.collegeInfo = c
+        self.locationInfo = l
+    def printCombinedDetails(self):
+        print(f"{self.collegeInfo.name} | {self.collegeInfo.age} | "
+              f"{self.collegeInfo.post} | {self.collegeInfo.salary} | "
+              f"{self.collegeInfo.DOJ} | {self.locationInfo.city} | "
+              f"{self.locationInfo.country}")
+def callPythonSubprogram():
+    print("\nSimulating external Python script execution:")
+    print("Python logic executed successfully.")
+def callJavaSubprogram():
+    print("\nSimulating external Java script execution:")
+    print("Java logic executed successfully.")
+def callSQLSubprogram():
+    print("\nSimulating external SQL script execution:")
+    print("SQL logic executed successfully.")
+def callCSubprogram():
+    print("\nSimulating external C script execution:")
+    print("C logic executed successfully.")
+def callJavascriptSubprogram():
+    print("\nSimulating external javascript script execution:")
+    print("Javascript logic executed successfully.")
+def main():
+    isAuthorized = True 
+    if isAuthorized:
+        print("Access Granted. Displaying Employee Details:")
+        print("Name | Age | Post | Salary | DOJ | City | Country")
+        collegeData = [
+            College("Suyash", 43, "Admin", 45000, "Monday"),
+            College("Amit", 54, "Supervisor", 68000, "Wednesday"),
+            College("Pravin", 45, "Staff", 32000, "Saturday"),
+            College("Rahul", 32, "Manager", 80000, "Tuesday"),
+            College("Amey", 46, "Synchronizer", 64000, "Thursday"),
+            College("Aditya", 62, "HOD", 90000, "Monday"),
+            College("Shyama", 20, "Clerk", 29000, "Friday"),
+            College("Farida", 29, "Advisor", 26000, "Wednesday"),
+            College("Mrunal", 72, "Query", 10000, "Thursday"),
+            College("Ragini", 38, "Database", 83000, "Saturday")
+        ]
+        locationData = [
+            Location("Pune", "India"),
+            Location("Mumbai", "India"),
+            Location("Nagpur", "India"),
+            Location("Delhi", "India"),
+            Location("Bangalore", "India"),
+            Location("Chennai", "India"),
+            Location("Kolkata", "India"),
+            Location("Hyderabad", "India"),
+            Location("Ahmedabad", "India"),
+            Location("Jaipur", "India")
+        ]
+        NUM_EMPLOYEES = 10
+        for i in range(NUM_EMPLOYEES):
+            emp = EmployeeDetails(collegeData[i], locationData[i])
+            emp.printCombinedDetails()
+        callPythonSubprogram()
+        callJavaSubprogram()
+        callSQLSubprogram()
+        callCSubprogram()
+        callJavascriptSubprogram()
+    else:
+        print("Access Revoked. User is not authorized.")
+if __name__ == "__main__":
+    main()
