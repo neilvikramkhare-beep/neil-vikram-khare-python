@@ -1,0 +1,45 @@
+with open("Demo.txt","r") as f:
+ f.write("My name is Neil khare.")
+print(data)
+print(type(data))
+line1=f.readline()
+print(line1)
+line1=f.readline()
+print(line1)
+f.write(new_data)
+def check_for_word():
+    word = "learning"
+    with open("Demo.txt","r") as f:
+        data = f.read()
+        if(data.find(word)!=-1):
+            print("found")
+        else:
+                print("not found")
+                def check_for_line():
+                    word="name"
+                    data=True
+                    line_number=1
+    with open("Demo.txt","r") as f:
+        data = f.readline()
+        if(word in data):
+            print(line_number)
+            line_number+=1
+    with open("Demo.txt","r") as f:
+        data = f.read()
+        print(data)
+        num=""
+        for i in range(len(data)):
+            if(data[i]==","):
+                print(num)
+                num=""
+            else:
+                num+=data[i]
+    with open("Demo.txt","r") as f:
+        data = f.read()
+        print(data)
+        nums=data.split(",")
+        for val in nums:
+            if(int(val)%2==0):
+                cout+=1
+                print(count)
+f.close()
