@@ -10,7 +10,4 @@ my_list = [64, 25, 12, 22, 11]
 print("Original list:", my_list)
 selection_sort(my_list)
 print("Sorted list:", my_list)
-another_list = [5, 1, 4, 2, 8]
-print("Original list:", another_list)
-selection_sort(another_list)
-print("Sorted list:", another_list)
+
