@@ -11,9 +11,9 @@ class Dog(Animal):
         return "Barks"
     def fetch(self):
         return f"{self.name} is fetching the ball."
-animal_obj = Animal("Generic Animal")
-dog_obj = Dog("Buddy", "Golden Retriever")
-print(f"{animal_obj.name} says: {animal_obj.speak()}")
-print(f"{dog_obj.name} says: {dog_obj.speak()}")
-print(dog_obj.fetch())
-print(f"{dog_obj.name} is a {dog_obj.breed}.")
+a = Animal("Generic Animal")
+d = Dog("Buddy", "Golden Retriever")
+print(f"{a.name} says: {a.speak()}")
+print(f"{d.name} says: {d.speak()}")
+print(d.fetch())
+print(f"{d.name} is a {d.breed}.")
