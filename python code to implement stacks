@@ -1,0 +1,45 @@
+class Queue:
+    def __init__(self, size):
+        self.size = size
+        self.queuelist = []
+    def isempty(self):
+        return len(self.queuelist) == 0
+    def isfull(self):
+        return len(self.queuelist) == self.size
+    def enqueue(self, x):
+        if self.isfull():
+            print("Queue overflow.\n")
+        else:
+            self.queuelist.append(x)
+            print(f"Enqueued: {x}")
+    def dequeue(self):
+        if self.isempty():
+            print("Queue underflow.\n")
+            return None
+        else:
+            dequeuedelement = self.queuelist.pop(0)
+            print(f"Dequeued:{dequeuedelement}")
+            return dequeuedelement
+    def show(self):
+        if self.isempty():
+            print("Queue is empty.\n")
+        else:
+            print("Queue elements:")
+            for item in self.queuelist:
+              print(item, end=" ")
+            print("\n") 
+if __name__ == "__main__":
+    try:
+        n = int(input("Enter the queue size: "))
+        q = Queue(n)
+        q.enqueue(76)
+        q.enqueue(45)
+        q.enqueue(98)
+        q.enqueue(86)
+        q.enqueue(43)
+        q.enqueue(42)
+        q.dequeue()
+        q.show()
+    except ValueError:     
+       print("Invalid input.")
+
