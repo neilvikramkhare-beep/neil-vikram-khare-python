@@ -1,0 +1,46 @@
+class Stack:
+    def __init__(self, size):
+        self.size = size
+        self.stacklist = []
+    def isempty(self):
+        return len(self.stacklist) == 0
+    def isfull(self):
+        return len(self.stacklist) == self.size
+    def push(self, x):
+        if self.isfull():
+            print("Stack overflow.\n")
+        else:
+            self.stacklist.append(x)
+            print(f"Pushed: {x}")
+    def pop(self):
+        if self.isempty():
+            print("Stack underflow.\n")
+            return None
+        else:
+            poppedelement = self.stacklist.pop(0)
+            print(f"Popped:{poppedelement}")
+            return poppedelement
+    def show(self):
+        if self.isempty():
+            print("Stack is empty.\n")
+        else:
+            print("Stack elements:")
+            for item in self.stacklist:
+              print(item, end=" ")
+            print("\n") 
+if __name__ == "__main__":
+    try:
+        n = int(input("Enter the stack size: "))
+        s = Stack(n)
+        s.push(76)
+        s.push(45)
+        s.push(98)
+        s.push(86)
+        s.push(43)
+        s.push(42)
+        s.push(67)
+        s.pop()
+        s.show()
+    except ValueError:     
+       print("Invalid input.")
+
