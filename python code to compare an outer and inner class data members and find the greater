@@ -1,0 +1,22 @@
+class Son:
+    def __init__(self):
+        self.sonname = "Rohan"
+        self.sonage = 32
+    def displaySon(self):
+        print(f"My name is: {self.sonname}")
+        print(f"My age is: {self.sonage}")
+class Father:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        self.son = Son()
+    def displayFather(self):
+        print(f"Name of my father: {self.name}")
+        print(f"Age of my father: {self.age}")
+        self.son.displaySon()
+f = Father("Ramesh", 89)
+if f.age > f.son.sonage:
+    print(f"Father's age is greater: {f.age}")
+else:
+    print(f"Son's age is greater or equal: {f.sonage}")
+f.displayFather()
