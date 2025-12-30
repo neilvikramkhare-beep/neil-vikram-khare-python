@@ -1,0 +1,18 @@
+class father:
+    def __init__(self, name,age):
+        self.name = name
+        self.age=age
+        self.soninstance = self.son()
+    def displayfather(self):
+        print(f"Name of my father: {self.name}")
+        print(f"Age of my father:{self.age}")
+        self.soninstance.displayson();
+    class son:
+        def __init__(self):
+            self.sonname = "Rohan"
+            self.sonage=32
+        def displayson(self):
+            print(f"My name is: {self.sonname}")
+            print(f"My age is:{self.sonage}")
+f = father("Ramesh",89)
+f.displayfather()
