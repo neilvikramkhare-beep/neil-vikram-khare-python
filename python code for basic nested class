@@ -3,12 +3,12 @@ class father:
         self.name = name
         self.soninstance = self.son()
     def displayfather(self):
-        print(f"This is the outer class: {self.name}")
+        print(f"This is the father class: {self.name}")
         self.soninstance.displayson();
     class son:
         def __init__(self):
             self.sonname = "Rohan"
         def displayson(self):
-            print(f"This is the inner class: {self.sonname}")
+            print(f"This is the son class: {self.sonname}")
 f = father("Ramesh")
 f.displayfather()
