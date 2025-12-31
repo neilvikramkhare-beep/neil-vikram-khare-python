@@ -1,0 +1,80 @@
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None  
+class LinkedList:
+    def __init__(self):
+        self.head = None  
+    def display(self):
+        current = self.head
+        while current:
+            print(current.data, end=" -> ")
+            current = current.next
+        print("None")
+    def insert_at_beginning(self, data):
+        new_node = Node(data)
+        new_node.next = self.head 
+        self.head = new_node     
+    def insert_at_end(self, data):
+        new_node = Node(data)
+        if self.head is None:
+            self.head = new_node  
+            return
+        current = self.head
+        while current.next:       
+            current = current.next
+        current.next = new_node    
+    def insert_at_position(self, data, position):
+        if position < 1:
+            print("Invalid position")
+            return
+        if position == 1:
+            self.insert_at_beginning(data)
+            return
+        new_node = Node(data)
+        current = self.head
+        for _ in range(position - 2):
+            if current is None:
+                print("Position out of bounds")
+                return
+            current = current.next
+        new_node.next = current.next
+        current.next = new_node
+    def delete_node(self, key):
+        current = self.head
+        if current and current.data == key:
+            self.head = current.next
+            current = None
+            return
+        prev = None
+        while current and current.data != key:
+            prev = current
+            current = current.next
+        if current is None:
+            return
+        prev.next = current.next
+        current = None
+    def search(self, key):
+        current = self.head
+        while current:
+            if current.data == key:
+                return True  
+            current = current.next
+        return False 
+my_list = LinkedList()
+my_list.insert_at_beginning(10)
+my_list.insert_at_end(20)
+my_list.insert_at_beginning(5)
+my_list.insert_at_position(15, 3) 
+print("Linked List after insertions:")
+my_list.display() 
+print(f"Is 10 in the list? {my_list.search(10)}") 
+print(f"Is 99 in the list? {my_list.search(99)}") 
+my_list.delete_node(15)
+print("Linked List after deleting 15:")
+my_list.display()
+my_list.delete_node(5) 
+print("Linked List after deleting 5 (head):")
+my_list.display() 
+
+
