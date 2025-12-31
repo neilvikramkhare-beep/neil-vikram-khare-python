@@ -1,0 +1,12 @@
+class Order:
+    def __init__(self,name,price):
+        self.name=name
+        self.price=price
+        def __compare__(self,odr2):
+            return self.price>odr2.price
+            odr1 = Order("Vegetables",790)
+            odr2 = Order("Friuts",780)
+            if odr1.price>odr2.price:
+              print(odr1)
+            else:
+              print(odr2)
