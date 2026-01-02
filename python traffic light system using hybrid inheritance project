@@ -8,9 +8,7 @@ class trafficSystem:
         print("\nEnter the city of the car:", self.city)
         print("\nEnter the country of the car:", self.country)
     def showdata(self):
-        print("Company:", self.company)
-        print("City:", self.city)
-        print("Country:", self.country)
+        print("Company|", self.company,"\tCity|", self.city,"\tCountry|", self.country)
 class company(trafficSystem):
     def __init__(self, company, city, country, DOE, branch, profit):
         super().__init__(company, city, country)
@@ -22,9 +20,7 @@ class company(trafficSystem):
         print("Enter the branch of the company:", self.branch)
         print("Enter the profit gained:", self.profit)
     def showdata1(self):
-        print("DOE:", self.DOE)
-        print("Branch:", self.branch)
-        print("Profit:", self.profit)
+        print("DOE|", self.DOE,"\tBranch|", self.branch,"\tProfit|", self.profit)
 class system(company):
     def __init__(self, company, city, country, DOE, branch, profit, light):
         super().__init__(company, city, country, DOE, branch, profit)
@@ -43,8 +39,25 @@ if light == "green":
     print("Go")
 if light == "yellow":
     print("Get ready")
-s = system("Tesla", "Pathankot", "India", "2012", "Main North", "5 Million", "green")
+class police(system):
+    def __init__(self,company, city, country, DOE,branch,profit, light,total,salary,DOJ):
+        super().__init__(company, city, country, DOE,branch,profit, light)
+        self.total=total
+        self.salary=salary
+        self.doj=DOJ
+    def getdata3(self):
+        print("Enter the total number of policemen:",self.total)
+        print("Enter the salary of policemen:",self.salary)
+        print("Enter the DOJ of policemen:",self.doj)
+    def showdata3(self):
+        print("Total policemen|",self.total,"\tSalary|",self.salary,"\tDOJ|",self.doj)
+p = police("Tesla", "Pathankot", "India", 2012, "Main North", 5000000, "green", 450, 67000, "12/09/20")
+p.getdata()
+p.getdata1()
+p.getdata2()
+p.getdata3()
 print("\nDisplaying Information")
-s.showdata()
-s.showdata1()
-s.showdata2()
+p.showdata()
+p.showdata1()
+p.showdata2()
+p.showdata3()
