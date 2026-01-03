@@ -1,0 +1,21 @@
+class Animal:
+    def __init__(self,name):
+       self.name=name
+    def eats(self):
+        print(f"{self.name} eats.") 
+    def sleeps(self):
+        print(f"{self.name} sleeps.")
+class Dog(Animal):
+    def __init__(self,name):
+        super().__init__(name) 
+        self.name = name
+    def barks(self):
+        print(f"{self.name} barks.")
+d1 = Dog("German Shepherd")
+d2 = Dog("Bulldog")
+d1.eats() 
+d1.sleeps()
+d1.barks()
+d2.eats()
+d2.sleeps()
+d2.barks()
