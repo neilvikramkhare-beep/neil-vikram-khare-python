@@ -1,0 +1,31 @@
+class Fish:
+    def __init__(self, name):
+        self.name = name
+    def getdata(self):
+        print("Enter the name:", self.name)
+    def showdata(self):
+        print("Name:", self.name)
+class Waterbody:
+    def __init__(self, waterbody): 
+        self.waterbody = waterbody
+    def getdata1(self):
+        print("Enter the waterbody:", self.waterbody)
+    def showdata1(self):
+        print("Waterbody:", self.waterbody)
+class Size(Fish, Waterbody):
+    def __init__(self, name, waterbody, size):
+        Fish.__init__(self, name)
+        Waterbody.__init__(self, waterbody)
+        self.size = size
+    def getdata2(self):
+        print("Enter the size of the fish:", self.size)
+    def showdata2(self):
+        print("Size:", self.size)
+s = Size("Shark", "ocean", 670)
+s.getdata()
+s.getdata1()
+s.getdata2()
+print("\nFish data\n")
+s.showdata()
+s.showdata1()
+s.showdata2()
