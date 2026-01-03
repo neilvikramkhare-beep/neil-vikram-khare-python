@@ -1,0 +1,13 @@
+class Person:
+    def __init__(self,name,age):
+        self.name=name
+        self.age=age
+    def showdata(self):
+        print("Name of the person:",self.name)
+        print("Age of the person:",self.age)
+class Student(Person):
+    def __init__(self,roll):
+       self.roll=rollNumber
+       super().__init__("Rahul Kumar",62)
+       s1=Student(67)
+       s1.showdata()
