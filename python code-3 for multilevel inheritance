@@ -1,0 +1,33 @@
+class school:
+    def __init__(self,name,standard):
+        self.name = name
+        self.standard = standard
+    def getdata(self):
+        print("Enter the name: ", self.name)
+        print("Enter the standard: ", self.standard)
+    def showdata(self):
+       print("Name:",self.name)
+       print("Standard:", self.standard)
+class branch(school):
+    def __init__(self,name,standard,place):
+        super().__init__(name,standard)
+        self.place=place
+    def getdata1(self):
+        print("Enter the place of school: ", self.place)
+    def showdata1(self):
+        print("Place:",self.place)
+class location(branch):
+    def __init__(self,name,standard,place,city):
+        super().__init__(name,standard,place)
+        self.city=city
+    def getdata2(self):
+        print("Enter the city name:",self.city)
+    def showdata2(self):
+        print("City:", self.city)
+l = location("Ramesh Mishra",10,"Tembhenaka","Mumbai")
+l.getdata()
+l.getdata1()
+l.getdata2()
+l.showdata()
+l.showdata1()
+l.showdata2()
