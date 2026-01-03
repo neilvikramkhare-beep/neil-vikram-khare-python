@@ -1,0 +1,27 @@
+class Food:
+    def __init__(self, name):
+        self.name = name
+    def getdata(self):
+        self.name = input("Enter the name of the person: ")
+    def showdata(self):
+        print("Name of the person:", self.name)
+class Shop(Food):
+    def __init__(self, name, shop):
+        super().__init__(name)
+        self.shop = shop
+    def getdata1(self):
+        self.shop = input("Enter the name of the shop: ")
+    def showdata1(self):
+        print("The name of the food shop is:", self.shop)
+class Location(Shop):
+    def __init__(self, name, shop, place):
+        super().__init__(name, shop)
+        self.place = place
+    def getdata2(self):
+        self.place = input("Enter the location of the shop: ")
+    def showdata2(self):
+        print("The location of the shop is:", self.place)
+l = Location("Rohan Sharma", "Bharat Halwai", "Satara")
+l.showdata()
+l.showdata1()
+l.showdata2()
