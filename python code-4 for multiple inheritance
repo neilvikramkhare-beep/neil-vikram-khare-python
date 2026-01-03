@@ -1,0 +1,29 @@
+class Length:
+    def __init__(self,length):
+        self.length=length
+    def getdata(self):
+        self.length=(int(input("enter the length:")))
+    def showdata(self):
+        print("Length:",self.length)
+class Breath:
+   def __init__(self,length,breath):
+       super().__init__(length)
+       self.breath=breath
+   def getdata1(self):
+        self.breath=(int(input("enter the breath:")))
+   def showdata1(self):
+        print("Breath:",self.breath)
+class Area(Length,Breath):
+   def __init__(self, length=0, breath=0):
+        self.area = 0
+   def calculateArea(self):
+        self.area = self.length * self.breath
+   def showdata2(self):
+        print("Area of rectangle =", self.area)
+for i in range(1, 11):
+   a = Area()
+   a.getdata()
+   a.getdata1()
+   a.showdata()
+   a.calculateArea()
+   a.showdata2()
