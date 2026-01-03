@@ -1,0 +1,28 @@
+class vehicle:
+    def getdata(self):
+        print("This is a vehicle.")
+class car(vehicle):
+    def __init__(self,name):
+        self.name=name
+    def getdata1(self):
+        print("Enter the name of the vehicle: ", self.name)
+    def showdata1(self):
+        print("Name:",self.name)
+class speed(car):
+    def __init__(self,name,distance,time):
+        super().__init__(name)
+        self.distance=distance
+        self.time=time
+    def getdata2(self):
+        print("Enter the distance:",self.distance)
+        print("Enter the distance:",self.time)
+    def calcSpeed(self):
+        s=0
+        s=self.distance/self.time
+        print("Speed:",s)
+s = speed("Ramesh Mishra",1670,40)
+s.getdata()
+s.getdata1()
+s.getdata2()
+s.showdata1()
+s.calcSpeed()
