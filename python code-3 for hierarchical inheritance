@@ -35,6 +35,8 @@ class MembershipLogin(ILogin):
         print("Membership ID:",self.membershipID)
         print("Phone number:",self.phone)
 i = ILogin("James Neesham",4764749)
+i.getdata()
+i.showdata()
 e = EmailLogin(43,"New Zealand","bkasjbdk","bhjasdk@dhiduh7678.com")
 m = MembershipLogin(6656687,4534544554)
 e.getdata1()
