@@ -1,0 +1,18 @@
+class Adustus:
+    def __init__(self, number=56):
+        self.number=number
+    def displayNumber2(self):
+        print("My number is", self.number)
+class Perifetus:
+    def __init__(self, number):
+        self.number = number
+    def displayNumber1(self):
+        print("Friend's number is:",self.number)
+a = Adustus()
+p = Perifetus( 89)
+if a.number > p.number:
+    print("My number is greater:",a.number)
+    a.displayNumber2()
+else:
+    print("Friend's number is greater:",p.number)
+    p.displayNumber1()
