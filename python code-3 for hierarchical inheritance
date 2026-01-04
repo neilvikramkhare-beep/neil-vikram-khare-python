@@ -1,0 +1,43 @@
+class ILogin:
+    def __init__(self,name,password):
+        self.name=name
+        self.password=password
+    def getdata(self):
+        print("Enter the name:",self.name)
+        print("Enter the password:",self.password)
+    def showdata(self):
+        print("Name of account holder:",self.name)
+        print("Password of account holder:",self.password)
+class EmailLogin(ILogin):
+    def __init__(self,age,country,city,email):
+        self.age=age
+        self.country=country
+        self.city=city
+        self.email=email
+    def getdata1(self):
+        print("Enter your age:",self.age)
+        print("Enter your country:",self.country)
+        print("Enter your city:",self.city)
+        print("Enter your email:",self.email)
+    def showdata1(self):
+        print("Age:",self.age)
+        print("Country:",self.country)
+        print("City:",self.city)
+        print("Email:",self.email)
+class MembershipLogin(ILogin):
+    def __init__(self,membershipid,number):
+        self.membershipID=membershipid
+        self.phone=number
+    def getdata2(self):
+        print("Enter your membership ID:",self.membershipID)
+        print("Enter your phone number:",self.phone)
+    def showdata2(self):
+        print("Membership ID:",self.membershipID)
+        print("Phone number:",self.phone)
+i = ILogin("James Neesham",4764749)
+e = EmailLogin(43,"New Zealand","bkasjbdk","bhjasdk@dhiduh7678.com")
+m = MembershipLogin(6656687,4534544554)
+e.getdata1()
+e.showdata1()
+m.getdata2()
+m.showdata2()
