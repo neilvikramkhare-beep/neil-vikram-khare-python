@@ -1,0 +1,23 @@
+class Result2:
+    def __init__(self, name="Rohan", marks=32):
+        self.name = name
+        self.marks = marks
+    def displayResult2(self):
+        print("My name is", self.name)
+        print("My marks are:",self.marks)
+class Result1:
+    def __init__(self, name, marks):
+        self.name = name
+        self.marks = marks
+    def displayResult1(self):
+        print("Friend's name is:",self.name)
+        print("Friend's marks are:",self.marks)
+
+r1 = Result2()
+r2 = Result1("Ramesh", 89)
+if r1.marks > r2.marks:
+    print("My marks are greater:",r1.marks)
+    r1.displayResult2()
+else:
+    print("Friend's marks are greater:",r2.marks)
+    r2.displayResult1()
