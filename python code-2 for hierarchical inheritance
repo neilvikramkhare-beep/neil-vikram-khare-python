@@ -1,0 +1,43 @@
+class grandfather:
+    def __init__(self, name,age):
+        self.name = name
+        self.age=age
+    def getdata(self):
+        print("My grandfather's name is:",self.name)
+        print("My grandfather's age is:",self.age)
+    def showdata(self):
+        print("Name:",self.name)
+        print("Age:",self.age)
+class father(grandfather):
+    def __init__(self,name,age,height):
+        super().__init__(name,age)  
+        self.height = height
+    def getdata1(self):  
+        print("My father's name is:",self.name)
+        print("My father's age is:",self.age)
+        print("My father's height is:",self.height)
+    def showdata1(self):
+        print("Name:",self.name)
+        print("Age:",self.age)
+        print("Height:",self.height)
+class child(grandfather):
+    def __init__(self,name,age,school):
+        super().__init__(name,age)
+        self.school = school
+    def getdata2(self):  
+        print("Enter the name of the child:",self.name)
+        print("Enter the age of the child:",self.age)
+        print("Enter the school name of the child:",self.school)
+    def showdata2(self):
+        print("Name:",self.name)
+        print("Age:",self.age)
+        print("School name:",self.school)
+g = grandfather("Ramesh khanna",87)
+f = father("Rahul Khanna",56,115)
+c = child("Aditya khanna", 32, "GGIS")
+g.getdata()
+g.showdata()
+f.getdata1()
+f.showdata1()
+c.getdata2()
+c.showdata2()
