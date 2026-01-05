@@ -1,0 +1,19 @@
+import pandas as pd
+import sys
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    print("Error: Matplotlib not found. Please run 'pip install matplotlib' in your terminal.")
+    sys.exit(1)
+data = {
+    'employee_name': ['Rahul', 'Suyash', 'Anand', 'Piyush', 'Ravindra', 'Smayan'],
+    'sid': [56, 34, 78, 75, 46, 85],
+    'salary': [56000, 45000, 85600, 35000, 53000, 57000]
+}
+df = pd.DataFrame(data)
+plt.figure(figsize=(8, 6))
+plt.bar(df['employee_name'], df['salary'], color='skyblue')
+plt.xlabel('Employee Name')
+plt.ylabel('Salary (INR)')
+plt.title('Employee Salary Distribution - 2026')
+plt.show()
