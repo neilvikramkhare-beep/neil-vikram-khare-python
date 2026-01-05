@@ -1,0 +1,6 @@
+from datetime import datetime
+# Get current local date and time
+now = datetime.now()
+print("Default format:", now)
+# Format to only show time (HH:MM:SS)
+print("Formatted time:", now.strftime("%H:%M:%S"))
