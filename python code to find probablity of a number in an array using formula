@@ -1,0 +1,13 @@
+a=[76,34,89,24,58,63]
+countB = 0
+countA_and_B = 0
+for i in range(len(a)):
+    if i>4:
+        countB+=i
+    if i%2==0:
+        countA_and_B = 0
+totaloutcomes=len(a)
+P_B=countB/totaloutcomes
+print("Total outcomes:",totaloutcomes)
+print("Probability of B:",P_B)
+    
