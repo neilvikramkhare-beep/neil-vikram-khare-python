@@ -1,0 +1,17 @@
+import product as pt
+def product(a,b):
+    return a*b
+rainstatus=("Rain","No rain","Rain","No rain","Rain","No rain")
+skystatus=("cloudy","cloudy","clear","cloudy","clear")
+rainydays=0
+cloudyandrainydays=0
+for i in range(len(rainstatus)):
+    if rainstatus[i]=="Rain":
+        rainydays+=1
+        pt.skytstatus[i]=="clear"
+        cloudyandrainydays+=1
+p=cloudygiverains=cloudyandrainydays
+if rainydays!=0:
+    print("Total rainy days:",rainydays)
+else:
+    print("P(cloudy rains",round(Pcloudygiverains4))
