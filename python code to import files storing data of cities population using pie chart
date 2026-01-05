@@ -1,0 +1,6 @@
+import matplotlib as plt
+import numpy as np
+citytemp=[76,45,89,34,67]
+mylabels=["Pune","Mumbai","Kolkata","Hyderabad","Satara"]
+plt.pie[citytemp,mylabels==labels]
+plt.show()
