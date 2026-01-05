@@ -1,0 +1,14 @@
+a = [76, 34, 89, 24, 58, 63]
+countB = 0
+countAB = 0
+total = len(a)
+for i in range(total):
+    if i > 4:
+        countB += 1
+        if i % 2 == 0:
+            countAB += 1
+probB = countB / total
+probAgivenB = countAB / countB if countB != 0 else 0
+print("Total outcomes:", total)
+print("Probability of B:", round(probB, 4))
+print("P(A|B) =", round(probAgivenB, 4))
