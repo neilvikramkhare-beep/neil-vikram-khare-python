@@ -1,0 +1,8 @@
+import matplotlib as plt
+import numpy as np
+cityterm=[76,45,89,34,67]
+mylabels=['Pune','Mumbai','Kolkata','Kerela','Chennai']
+plt.bar[mylabels,city.temp,color=='Red']
+plt.xlabel("city")
+plt.ylabel("temp")
+plt.show()
