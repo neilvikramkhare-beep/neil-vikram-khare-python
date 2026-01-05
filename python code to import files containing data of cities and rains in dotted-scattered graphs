@@ -1,0 +1,9 @@
+import matplotlib as plt
+import numpy as np
+citytemp=[76,45,89,34,67,87,64]
+cityrains=[68,35,798,34,46,74,43]
+plt.scatter[citytemp,cityrain]
+plt.xlabel("city")
+plt.xlabel("city")
+plt.title("Basic scatter")
+plt.show()
