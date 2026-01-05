@@ -1,0 +1,20 @@
+a = [56, 30, 67, 23, 78, 47]
+countB = 0
+countA_and_B = 0
+totaloutcomes = len(a)
+for i in range(len(a)):
+    isEventA = a[i] > 32
+    isEventB = i % 2 == 0
+    if isEventB:
+        countB += 1
+    if isEventA and isEventB:
+        countA_and_B += 1
+PB = countB / totaloutcomes if totaloutcomes > 0 else 0
+PA_given_B = countA_and_B / countB if countB > 0 else 0
+PA = sum(1 for x in a if x > 32) / totaloutcomes 
+if PB == 0:
+    print("P(A|B)=", round(PA_given_B, 4))
+elif PA == 0:
+    print("No solution.")
+else:
+    print("P(A|B)=", round(PA_given_B, 4))
