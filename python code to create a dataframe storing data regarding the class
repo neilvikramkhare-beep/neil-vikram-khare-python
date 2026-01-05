@@ -1,0 +1,8 @@
+import pandas as pd
+class1 = {
+    "age": [67, 43, 56],
+    "rollno": [45, 68, 35]
+}
+df = pd.DataFrame(class1)
+result = df.corr()
+print(result)
