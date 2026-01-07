@@ -1,0 +1,27 @@
+def mergesort(a):
+    if len(a) > 1:
+        mid = len(a) // 2
+        lefthalf = a[:mid]
+        righthalf = a[mid:]
+        mergesort(lefthalf)
+        mergesort(righthalf)
+        i = j = k = 0
+        while i < len(lefthalf) and j < len(righthalf):
+            if lefthalf[i] < righthalf[j]:
+                a[k] = lefthalf[i]
+                i += 1
+            else:
+                a[k] = righthalf[j]
+                j += 1
+            k += 1
+        while i < len(lefthalf):
+            a[k] = lefthalf[i]
+            i += 1
+            k += 1
+        while j < len(righthalf):
+            a[k] = righthalf[j]
+            j += 1
+            k += 1
+mylist = [38, 27, 43, 3, 9, 82, 10]
+mergesort(mylist)
+print("Sorted array is: ",mylist)
