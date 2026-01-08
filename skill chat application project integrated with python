@@ -1,0 +1,154 @@
+<?php
+$db = new PDO("sqlite:synclink.db");
+$db->exec("
+    CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT);
+    CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, text TEXT, timestamp TEXT);
+");
+if (isset($_GET['api'])) {
+    header("Content-Type: application/json");
+    $data = json_decode(file_get_contents("php://input"), true);
+    if ($_GET['api'] === "login") {
+        $u = $data["username"]; $p = $data["password"];
+        $stmt = $db->prepare("SELECT * FROM users WHERE username=? AND password=?");
+        $stmt->execute([$u, $p]);
+        if (!$stmt->fetch()) {
+            $db->prepare("INSERT INTO users (username, password) VALUES (?,?)")->execute([$u, $p]);
+        }
+        echo json_encode(["success" => true]); exit;
+    }
+    if ($_GET['api'] === "getMessages") {
+        echo json_encode($db->query("SELECT * FROM messages ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC)); exit;
+    }
+    if ($_GET['api'] === "sendMessage") {
+        $stmt = $db->prepare("INSERT INTO messages (username, text, timestamp) VALUES (?, ?, ?)");
+        $stmt->execute([$data['username'], $data['text'], date("Y-m-d H:i:s")]);
+        echo json_encode(["success" => true]); exit;
+    }
+    if ($_GET['api'] === "runPython") {
+        $pythonCode = '
+class College:
+    def __init__(self, n, a, p, s, doj):
+        self.name, self.age, self.post, self.salary, self.DOJ = n, a, p, s, doj
+class Location:
+    def __init__(self, city, cntry):
+        self.city, self.country = city, cntry
+class EmployeeDetails:
+    def __init__(self, c, l):
+        self.collegeInfo, self.locationInfo = c, l
+    def printDetails(self):
+        print(f"{self.collegeInfo.name} | {self.collegeInfo.post} | {self.locationInfo.city}")
+collegeData = [College("Suyash", 43, "Admin", 45000, "Monday"), College("Amit", 54, "Supervisor", 68000, "Wednesday")]
+locationData = [Location("Pune", "India"), Location("Mumbai", "India")]
+print("Python Engine Results")
+for i in range(len(collegeData)):
+    emp = EmployeeDetails(collegeData[i], locationData[i])
+    emp.printDetails()
+print("Subprograms (Java/SQL/C) simulated successfully.")';
+        file_put_contents("engine.py", $pythonCode);
+        $output = shell_exec("python3 engine.py 2>&1");
+        echo json_encode(["output" => $output]); exit;
+    }
+}
+?>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SyncLink Integrated System 2026</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #1a181b; color: #fff; font-family: 'Courier New', monospace; margin: 0; }
+        #loginPage { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .box { border: 1px solid #b07bff; padding: 30px; background: #1d1b1ecc; width: 400px; }
+        .hidden { display: none; }
+        input { width: 100%; padding: 10px; margin: 10px 0; background: #2d2d44; border: 1px solid #b07bff; color: white; }
+        button { background: #b07bff; color: white; border: none; padding: 10px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .app-container { display: flex; height: 100vh; }
+        .sidebar { width: 220px; border-right: 1px solid #b07bff; padding: 20px; }
+        .main-content { flex: 1; display: flex; flex-direction: column; padding: 20px; }
+        #messagesArea { flex: 1; overflow-y: auto; border: 1px solid #333; padding: 15px; margin-bottom: 10px; }
+        .log-box { background: #000; color: #0f0; padding: 10px; font-size: 12px; height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div id="loginPage">
+        <div class="box">
+            <h2>SyncLink Access</h2>
+            <input id="loginU" placeholder="Username">
+            <input type="password" id="loginP" placeholder="Password">
+            <button onclick="app.login()">Authorize & Enter</button>
+        </div>
+    </div>
+    <div id="appPage" class="app-container hidden">
+        <aside class="sidebar">
+            <h3>SyncLink v2.0</h3>
+            <button onclick="app.switchView('chat')">Chat View</button>
+            <button onclick="app.switchView('engine')">Python Engine</button>
+            <hr>
+        <p style="font-size: 10px;">Status: Authorized (2026)</p>
+        </aside>
+        <main class="main-content">
+            <div id="chatView">
+                <div id="messagesArea"></div>
+                <div style="display:flex; gap:10px;">
+                    <input id="msgInput" placeholder="Type message...">
+                    <button style="width:100px;" onclick="app.sendMessage()">Send</button>
+                </div>
+            </div>
+            <div id="engineView" class="hidden">
+                <h3>Object-Oriented Engine (Python/SQL)</h3>
+                <button onclick="app.runEngine()">Run Cross-Language Subprograms</button>
+                <pre id="pythonLog" class="log-box">Waiting for execution...</pre>
+            </div>
+        </main>
+    </div>
+    <script>
+        class SyncLinkApp {
+            constructor() {
+                this.user = "";
+            }
+            async login() {
+                const u = document.getElementById('loginU').value;
+                const p = document.getElementById('loginP').value;
+                const res = await fetch("?api=login", {
+                    method: "POST",
+                    body: JSON.stringify({username: u, password: p})
+                });
+                if (res.ok) {
+                    this.user = u;
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('appPage').classList.remove('hidden');
+                    this.loadMessages();
+                }
+            }
+            async loadMessages() {
+                const res = await fetch("?api=getMessages");
+                const data = await res.json();
+                const area = document.getElementById('messagesArea');
+                area.innerHTML = data.map(m => `<div>[${m.timestamp}] <b>${m.username}</b>: ${m.text}</div>`).join('');
+                area.scrollTop = area.scrollHeight;
+            }
+            async sendMessage() {
+                const text = document.getElementById('msgInput').value;
+                if(!text) return;
+                await fetch("?api=sendMessage", {
+                    method: "POST",
+                    body: JSON.stringify({username: this.user, text: text})
+                });
+                document.getElementById('msgInput').value = "";
+                this.loadMessages();
+            }
+            async runEngine() {
+                document.getElementById('pythonLog').innerText = "Processing...";
+                const res = await fetch("?api=runPython");
+                const data = await res.json();
+                document.getElementById('pythonLog').innerText = data.output;
+            }
+            switchView(view) {
+                document.getElementById('chatView').classList.toggle('hidden', view !== 'chat');
+                document.getElementById('engineView').classList.toggle('hidden', view !== 'engine');
+            }
+        }
+        const app = new SyncLinkApp();
+    </script>
+</body>
+</html>
