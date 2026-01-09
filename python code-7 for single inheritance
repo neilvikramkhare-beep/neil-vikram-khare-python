@@ -1,0 +1,34 @@
+class college:
+    def __init__(self,name,location,yoe):
+        self.name=name
+        self.location=location
+        self.yoe=yoe
+    def getdata(self):
+        print("enter the name of the college:",self.name)
+        print("enter the location of the college:",self.location)
+        print("enter the YOE of the college:",self.yoe)
+    def putdata(self):
+        print("Name of the college:",self.name)
+        print("Name of the location:",self.location)
+        print("YOE of the college:",self.yoe)
+class student:
+    def __init__(self,name,age,height):
+        self.name=name
+        self.age=age
+        self.height=height
+    def getdata1(self):
+       print("enter the name of the student:",self.name)
+       print("enter the age of the student:",self.age)
+       print("enter the height of the student:",self.height)
+    def putdata1(self):
+        print("Name of the student",self.name)
+        print("Age of the student",self.age)
+        print("height of the student",self.height)
+c = college("Pravin Wankhede","Panshet",2003)
+c.getdata()
+c.putdata()
+s = student("Aditya Phartade",32,980)
+s.getdata1()
+s.putdata1()
+        
+        
