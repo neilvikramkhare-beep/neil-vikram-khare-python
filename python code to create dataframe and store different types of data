@@ -1,0 +1,37 @@
+import pandas as pd
+df1 = pd.DataFrame()
+print(type(df1))
+print(df1)
+print(df1.columns)
+print(df1.index)
+studentlist = [
+    ['Raj', 'Sharma', 67, 'Java', 90],
+    ['Arvind', 'Garve', 46, 'Python', 87],
+    ['Suresh', 'Babu', 54, 'Javascript', 89],
+    ['Ramesh', 'Ahuja', 57, 'HTML', 79],
+    ['Aditya', 'Phartade', 59, 'XML', 53]
+]
+studentdf = pd.DataFrame(studentlist)
+print(studentdf)
+studentdf = pd.DataFrame(studentlist, columns=['Firstname', 'Lastname', 'Age', 'Subject', 'Score'])
+studentdf = pd.DataFrame(studentlist, 
+columns=['Firstname', 'Lastname', 'Age', 'Subject', 'Score'],
+index=['S1', 'S2', 'S3', 'S4', 'S5'])
+studentdf['gmail'] = ['hjghjhhkb@gmail.com', 'hdghsg@gmail.com', 'gdgsshdgh@gmail.com', 'dygdhgd@gmail.com', 'csygsjdxgb@gmail.com']
+studentdict = {
+    'Firstname': ['Raj', 'Arvind', 'Suresh', 'Ramesh', 'Aditya'],
+    'Lastname': ['Sharma', 'Garve', 'Babu', 'Ahuja', 'Phartade'],
+    'Age': [67, 46, 54, 57, 59],
+    'Subject': ['Java', 'Python', 'Javascript', 'HTML', 'XML'],
+    'Score': [90, 87, 89, 79, 53]
+}
+studentdf2 = pd.DataFrame(studentdict, columns=['Lastname', 'Score'])
+print(studentdf2)
+print(studentdf.columns)
+print(studentdf.index)
+print(studentdf.shape)
+print(studentdf.head())
+print(studentdf.tail())
+studentdf.info()
+print(studentdf.describe())
+
