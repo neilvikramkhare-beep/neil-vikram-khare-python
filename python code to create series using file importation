@@ -1,0 +1,17 @@
+import pandas as pd
+pd.__version__
+s1=pd.Series()
+s1
+s2=pd.Series([1,2,3,4,5])
+s2.index
+s2.values
+s3=pd.Series([1,2,3,4,5],index=[10,20,30,40,50])
+s3
+scores=pd.Series([7.6,8.7,3.5,7.9,3.5],index=['Rahul','Aditya','Saksham','Fareeda','Dinesh'])
+scores
+scores.index
+scores.values
+d={'Rahul':7.6,'Aditya':8.7,'Saksham':3.5,'Fareeda':7.9,'Dinesh':3.5}
+s4=pd.Series(d)
+s4.index
+s4.values
