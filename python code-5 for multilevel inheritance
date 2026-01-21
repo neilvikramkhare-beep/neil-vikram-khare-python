@@ -1,0 +1,49 @@
+class ranvijay:
+    def __init__(self,characters,age,behaviour):
+        self.characters=characters
+        self.age=age
+        self.behaviour=behaviour
+    def getdata(self):
+        print("enter ranvijay's characters:",self.characters)
+        print("enter ranvijay's age:",self.age)
+        print("enter ranvijay's behaviour:",self.behaviour)
+    def putdata(self):
+        print("Ranvijay's characters:",self.characters)
+        print("Ranvijay's age:",self.age)
+        print("Ranvijay's behaviour:",self.behaviour)
+class remit(ranvijay):
+    def __init__(self,characters,age,behaviour):
+        self.characters=characters
+        self.age=age
+        self.behaviour=behaviour
+    def getdata1(self):
+        print("enter remit's characters:",self.characters)
+        print("enter remit's age:",self.age)
+        print("enter remit's behaviour:",self.behaviour)
+    def putdata1(self):
+        print("Remit's characters:",self.characters)
+        print("Remit's age:",self.age)
+        print("Remit's behaviour:",self.behaviour)
+class lavkesh(remit):
+    def __init__(self,characters,age,behaviour):
+        self.characters=characters
+        self.age=age
+        self.behaviour=behaviour
+    def getdata2(self):
+        print("enter lavkesh's characters:",self.characters)
+        print("enter lavkesh's age:",self.age)
+        print("enter lavkesh's behaviour:",self.behaviour)
+    def putdata2(self):
+        print("Lavkesh's characters:",self.characters)
+        print("Lavkesh's age:",self.age)
+        print("Lavkesh's behaviour:",self.behaviour)
+r = ranvijay("useless",67,"sly")
+r.getdata()
+r.putdata()
+R = remit("brilliant",87,"helpful")
+R.getdata1()
+R.putdata1()
+l = lavkesh("timid",69,"thoughtful")
+l.getdata2()
+l.putdata2()
+    
