@@ -1,0 +1,127 @@
+import pandas as pd
+import sqlite3
+import os
+class College:
+    def __init__(self, n, a, p, s, doj):
+        self.name = n
+        self.age = a
+        self.post = p
+        self.salary = s
+        self.DOJ = doj
+class Location:
+    def __init__(self, city, cntry):
+        self.city = city
+        self.country = cntry
+class EmployeeDetails:
+    def __init__(self, c, l):
+        self.collegeInfo = c
+        self.locationInfo = l
+    def printCombinedDetails(self):
+        print(f"{self.collegeInfo.name} | {self.collegeInfo.age} | "
+              f"{self.collegeInfo.post} | {self.collegeInfo.salary} | "
+              f"{self.collegeInfo.DOJ} | {self.locationInfo.city} | "
+              f"{self.locationInfo.country}")
+def callPythonSubprogram():
+    print("\nSimulating external Python script execution:")
+    print("Python logic executed successfully.")
+def callJavaSubprogram():
+    print("\nSimulating external Java script execution:")
+    print("Java logic executed successfully.")
+def callSQLSubprogram():
+    print("\nSimulating external SQL script execution:")
+    print("SQL logic executed successfully.")
+def callCSubprogram():
+    print("\nSimulating external C script execution:")
+    print("C logic executed successfully.")
+def runemployeedetailslogic():
+    isAuthorized = True
+    if isAuthorized:
+        print("Access Granted. Displaying Employee Details:")
+        print("Name | Age | Post | Salary | DOJ | City | Country")
+        collegeData = [
+            College("Suyash", 43, "Admin", 45000, "Monday"),
+            College("Amit", 54, "Supervisor", 68000, "Wednesday"),
+            College("Pravin", 45, "Staff", 32000, "Saturday"),
+            College("Rahul", 32, "Manager", 80000, "Tuesday"),
+            College("Amey", 46, "Synchronizer", 64000, "Thursday"),
+            College("Aditya", 62, "HOD", 90000, "Monday"),
+            College("Shyama", 20, "Clerk", 29000, "Friday"),
+            College("Farida", 29, "Advisor", 26000, "Wednesday"),
+            College("Mrunal", 72, "Query", 10000, "Thursday"),
+            College("Ragini", 38, "Database", 83000, "Saturday")
+        ]
+        locationData = [
+            Location("Pune", "India"),
+            Location("Mumbai", "India"),
+            Location("Nagpur", "India"),
+            Location("Delhi", "India"),
+            Location("Bangalore", "India"),
+            Location("Chennai", "India"),
+            Location("Kolkata", "India"),
+            Location("Hyderabad", "India"),
+            Location("Ahmedabad", "India"),
+            Location("Jaipur", "India")
+        ]
+        NUMEMPLOYEES = 10
+        for i in range(NUMEMPLOYEES):
+            emp = EmployeeDetails(collegeData[i], locationData[i])
+            emp.printCombinedDetails()
+        callPythonSubprogram()
+        callJavaSubprogram()
+        callSQLSubprogram()
+        callCSubprogram()
+    else:
+        print("Access Revoked. User is not authorized.")
+DBFILE = "data_warehouse.db"
+TABLENAME = "salesdata"
+def extract_data():
+    try:
+        data1 = pd.DataFrame({
+            "order_id": [1, 2, 3],
+            "product": ["Laptop", "Mouse", "Keyboard"],
+            "quantity": [1, 2, 1],
+            "price": [800, 20, 50]
+        })
+        data2 = pd.DataFrame({
+            "order_id": [4, 5],
+            "product": ["Monitor", "Laptop"],
+            "quantity": [1, 1],
+            "price": [150, 750]
+        })
+        combineddata = pd.concat([data1, data2], ignoreindex=True)
+        print("\n✔ Data extracted successfully.")
+        return combined_data
+    except Exception as e:
+        print(f"❌ Error during extraction: {e}")
+        return pd.DataFrame()
+def transformdata(df):
+    try:
+        df['totalprice'] = df['quantity'] * df['price']
+        print("✔ Data transformed successfully.")
+        return df
+    except Exception as e:
+        print(f"❌ Error during transformation: {e}")
+        return pd.DataFrame()
+def loaddata(df, dbfile, tablename):
+    try:
+        conn = sqlite3.connect(dbfile)
+        df.to_sql(tablename, conn, ifexists='replace', index=True)
+        conn.close()
+        print(f"✔ Data loaded successfully into SQLite database: {dbfile}")
+    except Exception as e:
+        print(f"❌ Error during loading: {e}")
+def runetlprocess():
+    if os.path.exists(DBFILE):
+        os.remove(DBFILE)
+        print(f"Existing database file '{DBFILE}' removed.")
+    extracteddata = extractdata()
+    if not extracteddata.empty:
+        transformeddata = transformdata(extracteddata)
+        if not transformed_data.empty:
+            loaddata(transformeddata, DBFILE, TABLENAME)
+if __name__ == "__main__":
+    print("Starting Employee Details Program")
+    runemployeedetailslogic()
+    print("\n" + "="*50 + "\n")
+    print("Starting ETL Process Program")
+    runetlprocess()
