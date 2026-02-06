@@ -1,0 +1,92 @@
+class trafficSystem:
+    def __init__(self, company, city, country):
+        self.company = company
+        self.city = city
+        self.country = country
+    def getdata(self):
+        print("Enter the company of the car: ", self.company)
+        print("Enter the city of the car: ", self.city)
+        print("Enter the country of the car: ", self.country)
+    def showdata(self):
+        print("Company|", self.company, "\tCity|", self.city, "\tCountry|", self.country)
+class company(trafficSystem):
+    def __init__(self, company, city, country, DOE, branch, profit):
+        super().__init__(company, city, country)
+        self.DOE = DOE
+        self.branch = branch
+        self.profit = profit
+    def getdata1(self):
+        print("Enter the date of establishment: ", self.DOE)
+        print("Enter the branch of the company: ", self.branch)
+        print("Enter the profit gained: ", self.profit)
+    def showdata1(self):
+        print("DOE|", self.DOE, "\tBranch|", self.branch, "\tProfit|", self.profit)
+class system(company):
+    def __init__(self, company, city, country, DOE, branch, profit, light):
+        super().__init__(company, city, country, DOE, branch, profit)
+        self.light = light
+    def getdata2(self):
+        self.light = input("Enter the signal light: ")
+    def showdata2(self):
+        print("Light:", self.light)
+        go = True
+        if self.light == "red":
+            print("Stop")
+            if go:
+                print("Pay 5000")
+        elif self.light == "green":
+            print("Go")
+        elif self.light == "yellow":
+            print("Get ready")
+class police(system):
+    def __init__(self, company, city, country, DOE, branch, profit, light, total, salary, DOJ):
+        super().__init__(company, city, country, DOE, branch, profit, light)
+        self.total = total
+        self.salary = salary
+        self.doj = DOJ
+    def getdata3(self):
+        print("Enter the total number of policemen: ", self.total)
+        print("Enter the salary of policemen: ", self.salary)
+        print("Enter the DOJ of policemen: ", self.doj)
+    def showdata3(self):
+        print("Total policemen|", self.total, "\tSalary|", self.salary, "\tDOJ|", self.doj)
+class Account(police):
+    def __init__(self, company, city, country, DOE, branch, profit, light, total, salary, DOJ, bal, acc):
+        super().__init__(company, city, country, DOE, branch, profit, light, total, salary, DOJ)
+        self.balance = bal
+        self.account_no = acc
+    def debit(self, amount):
+        if amount > self.balance:
+            print("Error: Insufficient funds for debit of Rs. ", amount)
+        else:
+            self.balance -= amount
+            print("Rs. ", amount, "was debited")
+            print("total balance = ", self.getbalance())
+    def credit(self, amount):
+        self.balance += amount
+        print("Rs. ", amount, "was credited")
+        print("Total balance= ", self.getbalance())
+    def getbalance(self):
+        return self.balance
+p = police("Tesla", "Pathankot", "India", 2012, "Main North", 5000000, "green", 450, 67000, "12/09/20")
+p.getdata()
+p.getdata1()
+p.getdata2()
+p.getdata3()
+print("\nDisplaying Information")
+p.showdata()
+p.showdata1()
+p.showdata2()
+p.showdata3()
+acc1 = Account("Tesla", "Pathankot", "India", 2012, "Main North", 5000000, "green", 450, 67000, "12/09/20", 10000, 12345)
+acc2 = Account("Hammer", "Kashmir", "India", 2018, "Lal chowk", 5067000, "green", 670, 56000, "19/11/26", 17600, 12455)
+acc3 = Account("Swift", "Banglore", "India", 2013, "MH15 highway", 5056760, "green", 450, 67000, "12/09/20", 10560, 12345)
+acc1.debit(1000)
+acc1.credit(500)
+acc1.credit(40000)
+acc2.debit(5600)
+acc2.credit(340)
+acc2.credit(68000)
+acc3.debit(2360)
+acc3.credit(12670)
+acc3.credit(56880)
