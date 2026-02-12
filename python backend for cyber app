@@ -1,17 +1,42 @@
-#URL scanner
-import ssl, socket
+# ==============================
+# Cyber Security Risk Monitor
+# Full Combined Version
+# ==============================
+
+import ssl
+import socket
+import threading
+import time
+import json
+import os
 from urllib.parse import urlparse
+from datetime import datetime
+import tkinter as tk
+import tkinter.messagebox as alert
+
+# External library (must be installed)
+from hibp_client import HIBPClient
+
+
+# ==========================================
+# URL SCANNER
+# ==========================================
+
 def scan_url(url):
     try:
         hostname = urlparse(url).netloc
         context = ssl.create_default_context()
-        with socket.create_connection((hostname, 443)) as sock:
+        with socket.create_connection((hostname, 443), timeout=5) as sock:
             with context.wrap_socket(sock, server_hostname=hostname):
                 return "SSL Certificate: Valid\nNo immediate threats found."
     except:
         return "Warning: SSL issue or site unreachable."
-      #Severity scoring
-from datetime import datetime
+
+
+# ==========================================
+# SEVERITY SCORING
+# ==========================================
+
 DATA_TYPE_WEIGHTS = {
     "passwords": 40,
     "financial": 35,
@@ -20,6 +45,7 @@ DATA_TYPE_WEIGHTS = {
     "usernames": 10,
     "ip addresses": 5
 }
+
 def record_score(count):
     if count < 10_000:
         return 5
@@ -31,9 +57,11 @@ def record_score(count):
         return 30
     else:
         return 40
+
 def data_type_score(types):
     score = sum(DATA_TYPE_WEIGHTS.get(t.lower(), 0) for t in types)
     return min(score, 40)
+
 def age_score(breach_year):
     current_year = datetime.now().year
     age = current_year - breach_year
@@ -42,6 +70,7 @@ def age_score(breach_year):
     elif age <= 3:
         return 10
     return 5
+
 def severity_level(score):
     if score <= 20:
         return "Low"
@@ -50,6 +79,7 @@ def severity_level(score):
     elif score <= 75:
         return "High"
     return "Critical"
+
 def calculate_breach_severity(records, data_types, breach_year):
     total = (
         record_score(records)
@@ -57,73 +87,36 @@ def calculate_breach_severity(records, data_types, breach_year):
         + age_score(breach_year)
     )
     total = min(total, 100)
+
     return {
         "score": total,
         "severity": severity_level(total)
     }
-#Breach cheker
-from urllib.parse import urlparse
-from hibp_client import HIBPClient
-from severity_scoring import calculate_breach_severity
-from breach_alerts import check_for_new_breaches
-client = HIBPClient()
-def extract_domain(url):
-    return urlparse(url).netloc.replace("www.", "")
-def check_breaches(url):
-    domain = extract_domain(url)
-    breaches = client.get_all_breaches()
-    if not breaches:
-        return "No breach data available."
-    domain_breaches = [
-        b for b in breaches if domain in (b.get("Domain") or "")
-    ]
-    if not domain_breaches:
-        return "No known public breaches found for this domain."
-    check_for_new_breaches(domain, domain_breaches)
-    output = ""
-    for breach in domain_breaches:
-        records = breach.get("PwnCount", 0)
-        data_types = breach.get("DataClasses", [])
-        year = int(breach.get("BreachDate", "2000")[:4])
-        severity = calculate_breach_severity(
-            records, data_types, year
-        )
-        output += f"""
-Breach Name: {breach['Name']}
-Date: {breach['BreachDate']}
-Records Exposed: {records}
-Data Types: {', '.join(data_types)}
-Risk Score: {severity['score']}/100
-Severity: {severity['severity']}
-"""
-    return output
-#Auto scan
-import threading
-import time
-def auto_scan(url, interval_hours=6):
-    while True:
-        breach_checker(url)
-        time.sleep(interval_hours * 3600)
-threading.Thread(target=auto_scan, args=("https://example.com",), daemon=True).start()
-#Breach alerts
-import json
-import os
-from datetime import datetime
-import tkinter.messagebox as alert
+
+
+# ==========================================
+# BREACH ALERT CACHE
+# ==========================================
+
 CACHE_FILE = "breach_cache.json"
+
 def load_cache():
     if not os.path.exists(CACHE_FILE):
         return {}
     with open(CACHE_FILE, "r") as f:
         return json.load(f)
+
 def save_cache(cache):
     with open(CACHE_FILE, "w") as f:
         json.dump(cache, f, indent=4)
+
 def check_for_new_breaches(domain, current_breaches):
     cache = load_cache()
     known = set(cache.get(domain, []))
     current = set(b["Name"] for b in current_breaches)
+
     new_breaches = current - known
+
     if new_breaches:
         message = (
             f"⚠️ New breach detected for {domain}!\n\n"
@@ -131,92 +124,106 @@ def check_for_new_breaches(domain, current_breaches):
             + f"\n\nDetected on {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         )
         alert.showwarning("Security Alert", message)
+
     cache[domain] = list(current)
     save_cache(cache)
+
     return list(new_breaches)
-#App GUI
-import tkinter as tk
-from breach_checker import check_breaches
-from url_scanner import scan_url
-from dashboard import RiskDashboard
-def run_scan():
-    url = entry.get().strip()
-    if not url:
-        return
-    site_result = scan_url(url)
-    breach_result = check_breaches(url)
-    if breach_result:
-        dashboard.update_dashboard(
-            breach_result["score"],
-            breach_result["severity"],
-            breach_result["report"]
+
+
+# ==========================================
+# BREACH CHECKER
+# ==========================================
+
+client = HIBPClient()
+
+def extract_domain(url):
+    return urlparse(url).netloc.replace("www.", "")
+
+def check_breaches(url):
+    domain = extract_domain(url)
+    breaches = client.get_all_breaches()
+
+    if not breaches:
+        return {
+            "score": 0,
+            "severity": "Low",
+            "report": "No breach data available."
+        }
+
+    domain_breaches = [
+        b for b in breaches if domain in (b.get("Domain") or "")
+    ]
+
+    if not domain_breaches:
+        return {
+            "score": 0,
+            "severity": "Low",
+            "report": "No known public breaches found for this domain."
+        }
+
+    check_for_new_breaches(domain, domain_breaches)
+
+    output = ""
+    highest_score = 0
+    highest_severity = "Low"
+
+    for breach in domain_breaches:
+        records = breach.get("PwnCount", 0)
+        data_types = breach.get("DataClasses", [])
+        year = int(breach.get("BreachDate", "2000")[:4])
+
+        severity = calculate_breach_severity(
+            records, data_types, year
         )
-    output.delete("1.0", tk.END)
-    output.insert(tk.END, "Website Scan Result:\n")
-    output.insert(tk.END, site_result)
-root = tk.Tk()
-root.title("Cyber Security Risk Monitor")
-root.geometry("900x700")
-root.configure(bg="#1e1e1e")
-top = tk.Frame(root, bg="#1e1e1e")
-top.pack(pady=10)
-tk.Label(
-    top,
-    text="Website URL:",
-    fg="white",
-    bg="#1e1e1e",
-    font=("Segoe UI", 10)
-).pack(side="left", padx=5)
-entry = tk.Entry(top, width=45, font=("Segoe UI", 10))
-entry.pack(side="left", padx=5)
-tk.Button(
-    top,
-    text="Scan Now",
-    command=run_scan,
-    bg="#3498db",
-    fg="white",
-    font=("Segoe UI", 10, "bold"),
-    width=12
-).pack(side="left", padx=5)
-dashboard = RiskDashboard(root)
-output_frame = tk.Frame(root, bg="#1e1e1e")
-output_frame.pack(pady=10)
-tk.Label(
-    output_frame,
-    text="Website Security Scan",
-    fg="white",
-    bg="#1e1e1e",
-    font=("Segoe UI", 12, "bold")
-).pack(anchor="w")
-output = tk.Text(
-    output_frame,
-    height=8,
-    width=100,
-    bg="#121212",
-    fg="white",
-    insertbackground="white"
-)
-output.pack()
-root.mainloop()
-dashboard = RiskDashboard(root)
-dashboard.update_dashboard(
-    score=85,
-    severity="Critical",
-    report_text="Example breach details..."
-)
-#Dashboard
-import tkinter as tk
-from datetime import datetime
+
+        if severity["score"] > highest_score:
+            highest_score = severity["score"]
+            highest_severity = severity["severity"]
+
+        output += f"""
+Breach Name: {breach['Name']}
+Date: {breach['BreachDate']}
+Records Exposed: {records}
+Data Types: {', '.join(data_types)}
+Risk Score: {severity['score']}/100
+Severity: {severity['severity']}
+----------------------------------------
+"""
+
+    return {
+        "score": highest_score,
+        "severity": highest_severity,
+        "report": output
+    }
+
+
+# ==========================================
+# AUTO SCAN THREAD
+# ==========================================
+
+def auto_scan(url, interval_hours=6):
+    while True:
+        check_breaches(url)
+        time.sleep(interval_hours * 3600)
+
+
+# ==========================================
+# DASHBOARD
+# ==========================================
+
 SEVERITY_COLORS = {
-    "Low": "#2ecc71",       
-    "Medium": "#f1c40f",     
-    "High": "#e67e22",      
-    "Critical": "#e74c3c"    
+    "Low": "#2ecc71",
+    "Medium": "#f1c40f",
+    "High": "#e67e22",
+    "Critical": "#e74c3c"
 }
+
 class RiskDashboard(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent, bg="#1e1e1e")
         self.pack(fill="x", padx=10, pady=10)
+
         self.score_label = tk.Label(
             self,
             text="Risk Score: -- / 100",
@@ -225,6 +232,7 @@ class RiskDashboard(tk.Frame):
             bg="#1e1e1e"
         )
         self.score_label.pack(pady=(5, 0))
+
         self.severity_label = tk.Label(
             self,
             text="Severity: --",
@@ -233,6 +241,7 @@ class RiskDashboard(tk.Frame):
             bg="#1e1e1e"
         )
         self.severity_label.pack(pady=(0, 5))
+
         self.time_label = tk.Label(
             self,
             text="Last Scan: --",
@@ -241,6 +250,7 @@ class RiskDashboard(tk.Frame):
             bg="#1e1e1e"
         )
         self.time_label.pack(pady=(0, 10))
+
         self.report_box = tk.Text(
             self,
             height=12,
@@ -251,11 +261,13 @@ class RiskDashboard(tk.Frame):
             wrap="word"
         )
         self.report_box.pack(pady=5)
+
         self.report_box.insert(
             tk.END,
             "Run a scan to see breach and risk details here."
         )
         self.report_box.config(state="disabled")
+
     def update_dashboard(self, score, severity, report_text):
         self.score_label.config(text=f"Risk Score: {score} / 100")
         self.severity_label.config(
@@ -265,8 +277,87 @@ class RiskDashboard(tk.Frame):
         self.time_label.config(
             text=f"Last Scan: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
+
         self.report_box.config(state="normal")
         self.report_box.delete("1.0", tk.END)
         self.report_box.insert(tk.END, report_text)
         self.report_box.config(state="disabled")
 
+
+# ==========================================
+# GUI APPLICATION
+# ==========================================
+
+def run_scan():
+    url = entry.get().strip()
+    if not url:
+        return
+
+    site_result = scan_url(url)
+    breach_result = check_breaches(url)
+
+    dashboard.update_dashboard(
+        breach_result["score"],
+        breach_result["severity"],
+        breach_result["report"]
+    )
+
+    output.delete("1.0", tk.END)
+    output.insert(tk.END, "Website Scan Result:\n")
+    output.insert(tk.END, site_result)
+
+
+# Main Window
+root = tk.Tk()
+root.title("Cyber Security Risk Monitor")
+root.geometry("900x700")
+root.configure(bg="#1e1e1e")
+
+top = tk.Frame(root, bg="#1e1e1e")
+top.pack(pady=10)
+
+tk.Label(
+    top,
+    text="Website URL:",
+    fg="white",
+    bg="#1e1e1e",
+    font=("Segoe UI", 10)
+).pack(side="left", padx=5)
+
+entry = tk.Entry(top, width=45, font=("Segoe UI", 10))
+entry.pack(side="left", padx=5)
+
+tk.Button(
+    top,
+    text="Scan Now",
+    command=run_scan,
+    bg="#3498db",
+    fg="white",
+    font=("Segoe UI", 10, "bold"),
+    width=12
+).pack(side="left", padx=5)
+
+dashboard = RiskDashboard(root)
+
+output_frame = tk.Frame(root, bg="#1e1e1e")
+output_frame.pack(pady=10)
+
+tk.Label(
+    output_frame,
+    text="Website Security Scan",
+    fg="white",
+    bg="#1e1e1e",
+    font=("Segoe UI", 12, "bold")
+).pack(anchor="w")
+
+output = tk.Text(
+    output_frame,
+    height=8,
+    width=100,
+    bg="#121212",
+    fg="white",
+    insertbackground="white"
+)
+output.pack()
+
+root.mainloop()
