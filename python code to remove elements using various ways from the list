@@ -1,0 +1,8 @@
+a=[67,34,98,43,49,64,56,43,79,32]
+a.remove(49)
+print(a)
+poppedVal=a.pop(4)
+print(poppedVal)
+print(a)
+del a[4]
+print(a)
