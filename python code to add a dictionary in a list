@@ -1,0 +1,4 @@
+a=[{'name':'gfgfhg','age':67},{'name':'hggfgfd','age':54}]
+b={'name':'hgdfvdg','age':45}
+a.append(b)
+print(a)
