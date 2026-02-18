@@ -1,0 +1,4 @@
+a=list((76,89,45,'apple',78.56))
+print(a)
+a.append("MIT")
+print(a)
