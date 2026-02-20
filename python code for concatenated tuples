@@ -1,0 +1,4 @@
+t1=(56,34,89)
+t2=(45,56,78)
+t3=t1+t2
+print("Conatenated tuple:",t3)
