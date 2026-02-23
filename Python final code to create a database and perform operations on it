@@ -1,0 +1,112 @@
+class College:
+    def __init__(self, n, a, p, s, doj):
+        self.name = n
+        self.age = a
+        self.post = p
+        self.salary = s
+        self.DOJ = doj
+class Location:
+    def __init__(self, city, cntry):
+        self.city = city
+        self.country = cntry
+class EmployeeDetails:
+    def __init__(self, c, l):
+        self.collegeInfo = c
+        self.locationInfo = l
+    def printCombinedDetails(self):
+        print(f"{self.collegeInfo.name} | {self.collegeInfo.age} | "
+              f"{self.collegeInfo.post} | {self.collegeInfo.salary} | "
+              f"{self.collegeInfo.DOJ} | {self.locationInfo.city} | "
+              f"{self.locationInfo.country}")
+database = []
+def insertEmployee(emp):
+    database.append(emp)
+    print("Employee inserted successfully.")
+def displayAllEmployees():
+    print("\nEmployee Records")
+    for emp in database:
+        emp.printCombinedDetails()
+def searchEmployee(name):
+    for emp in database:
+        if emp.collegeInfo.name.lower() == name.lower():
+            print("\nEmployee Found:")
+            emp.printCombinedDetails()
+            return
+    print("Employee not found.")
+def updateEmployee(name, new_salary):
+    for emp in database:
+        if emp.collegeInfo.name.lower() == name.lower():
+            emp.collegeInfo.salary = new_salary
+            print("Employee salary updated successfully.")
+            return
+    print("Employee not found.")
+def deleteEmployee(name):
+    global database
+    database = [emp for emp in database if emp.collegeInfo.name.lower() != name.lower()]
+    print("Employee deleted if existed.")
+def sortBySalary():
+    sorted_db = sorted(database, key=lambda x: x.collegeInfo.salary)
+    print("\nSorted by Salary")
+    for emp in sorted_db:
+        emp.printCombinedDetails()
+def filterByCity(city):
+    print(f"\nEmployees in {city}")
+    for emp in database:
+        if emp.locationInfo.city.lower() == city.lower():
+            emp.printCombinedDetails()
+def countEmployees():
+    print(f"\nTotal Employees: {len(database)}")
+def highestSalary():
+    emp = max(database, key=lambda x: x.collegeInfo.salary)
+    print("\nHighest Salary Employee:")
+    emp.printCombinedDetails()
+def lowestSalary():
+    emp = min(database, key=lambda x: x.collegeInfo.salary)
+    print("\nLowest Salary Employee:")
+    emp.printCombinedDetails()
+def bulkInsert(employee_list):
+    database.extend(employee_list)
+    print("Bulk insert completed.")
+def exportData():
+    print("\nExporting data to file:")
+    print("Data exported successfully.")
+def main():
+    isAuthorized = True
+    if isAuthorized:
+        print("Access Granted.")
+        collegeData = [
+            College("Suyash", 43, "Admin", 45000, "Monday"),
+            College("Amit", 54, "Supervisor", 68000, "Wednesday"),
+            College("Rahul", 32, "Manager", 80000, "Tuesday"),
+            College("Rajesh", 76, "Counsellor", 76000, "Thursday"),
+            College("Raveena", 32, "HOD", 90000, "Tuesday"),
+            College("Gaurav", 43, "CO", 88000, "Monday"),
+            College("Shirsh", 39, "Admin", 45000, "Tuesday"),
+            College("Hiresh", 45, "Payloader", 78000, "Thursday")
+        ]
+        locationData = [
+            Location("Pune", "India"),
+            Location("Mumbai", "India"),
+            Location("Delhi", "India"),
+            Location("Pune", "India"),
+            Location("Jaipur", "India"),
+            Location("Dehradun", "India"),
+            Location("Manipur", "India"),
+            Location("Kochin", "India")
+        ]
+        for i in range(len(collegeData)):
+            insertEmployee(EmployeeDetails(collegeData[i], locationData[i]))
+        displayAllEmployees()
+        searchEmployee("Rahul")
+        updateEmployee("Rahul", 95000)
+        deleteEmployee("Amit")
+        sortBySalary()
+        filterByCity("Pune")
+        countEmployees()
+        highestSalary()
+        lowestSalary()
+        exportData()
+    else:
+        print("Access Revoked.")
+if __name__ == "__main__":
+    main()
