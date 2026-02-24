@@ -1,3 +1,4 @@
+print("Python code to create a database and perform operations on it.")
 class College:
     def __init__(self, n, a, p, s, doj):
         self.name = n
