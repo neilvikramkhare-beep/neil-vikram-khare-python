@@ -1,0 +1,4 @@
+f = (lambda x:"positive" if x>0 else "negetive" if x<0 else "zero")
+print(f(6))
+print(f(-3))
+print(f(0))
