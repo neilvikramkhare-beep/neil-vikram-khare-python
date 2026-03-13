@@ -1,0 +1,31 @@
+def fibonacci(nterms):
+    a, b = 0, 1
+    series = []
+    if nterms <= 0:
+        return series
+    elif nterms == 1:
+        series.append(a)
+        return series
+    else:
+        for i in range(nterms):
+            series.append(a)
+            c = a + b
+            a = b
+            b = c
+        return series
+def factorial(n):
+    if n < 0:
+     print("Factorial does not exist for negative numbers.")
+    elif n == 0 or n == 1:
+        return 1
+    else:
+        result = 1
+        for i in range(1, n + 1):
+            result *= i
+        return result
+terms = 10
+sequence = fibonacci(terms)
+print(f"Fibonacci series up to {terms} terms: {sequence}")
+fact = 5
+result = factorial(fact)
+print(f"Factorial of {fact}: {result}")
