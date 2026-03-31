@@ -1,0 +1,29 @@
+var = 'PYTHON INTERPRETER'
+print (var.capitalize())
+var = 'MitPolytechnic'
+print (var.lower())
+print (var.upper())
+print (var.swapcase())
+var = 'welcome to Python programming'
+print (var.title())
+var='Python'
+print (var.islower())
+var='PYTHON'
+print (var.isupper())
+print ('2'.isdigit())
+var="Mit Polytechnic"
+str="oly"
+print ("\n",var.find(str)) 
+var="Mit Polytechnic"
+str="Poly"
+print (var.find(str,3,9)) 
+var='That is a good example'
+str='was'
+print ("\n",var.replace('is',str))
+var = "This is a good example"
+print ("\n",var.split())
+var='Print new line\nNextline\nMove again to new line'
+print (var.splitlines())
+seq=('ab','bc','cd')
+str='+'
+print (str.join(seq),"\n")
