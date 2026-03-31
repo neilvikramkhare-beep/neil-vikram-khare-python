@@ -1,0 +1,8 @@
+from math import sqrt, factorial
+print(sqrt(16))
+print(factorial(6))
+4.0
+720
+import random
+print("\n",random.randint(1, 10))
+print(random.random())
