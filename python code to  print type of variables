@@ -1,0 +1,7 @@
+x = 5
+print("x is of type:",type(x))
+y = 3.4
+print("y is of type:",type(y))
+x = x + y
+print(x)
+print("x is of type:",type(x))
