@@ -1,0 +1,911 @@
+//app.py
+import os
+from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
+
+# Import custom modules
+from solver import solve_math_problem
+from image_reader import extract_math_from_image
+from formatter import format_result
+
+# --- Flask Setup ---
+app = Flask(__name__)
+
+# Upload folder config
+UPLOAD_FOLDER = "uploads"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "bmp"}
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Ensure upload folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+# --- Helper Functions ---
+def allowed_file(filename):
+    """Check allowed file extensions."""
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# --- Routes ---
+@app.route("/", methods=["GET"])
+def index():
+    """Render main UI (single-page frontend)."""
+    return render_template("index.html")
+
+
+@app.route("/solve", methods=["POST"])
+def solve():
+    """
+    Handles both:
+    - Text input
+    - Image upload (OCR)
+    Returns HTML snippet (AJAX response).
+    """
+    math_expression = ""
+    source = ""
+
+    # --- IMAGE INPUT ---
+    if "math_image" in request.files and request.files["math_image"].filename != "":
+        image_file = request.files["math_image"]
+
+        if allowed_file(image_file.filename):
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            image_file.save(image_path)
+
+            # Extract math from image
+            math_expression = extract_math_from_image(image_path)
+            source = "image"
+
+            # Delete file after processing
+            try:
+                if os.path.exists(image_path):
+                    os.remove(image_path)
+            except:
+                pass
+
+        else:
+            return error_html("Invalid file type. Upload PNG/JPG.")
+
+    # --- TEXT INPUT ---
+    elif "math_text" in request.form and request.form["math_text"].strip():
+        math_expression = request.form["math_text"].strip()
+        source = "text"
+
+    else:
+        return error_html("Please enter a math problem or upload an image.")
+
+    # --- VALIDATION ---
+    if not math_expression:
+        return error_html("Could not read any math expression.")
+
+    # --- SOLVE ---
+    result_data = solve_math_problem(math_expression)
+
+    # --- FORMAT RESULT ---
+    formatted = format_result(result_data, math_expression, source)
+
+    # --- HANDLE ERROR FROM SOLVER ---
+    if formatted.get("error_message"):
+        return error_html(formatted["error_message"])
+
+    # --- BUILD HTML RESPONSE (AJAX) ---
+    steps_html = ""
+    for step in formatted["steps"]:
+        steps_html += f"""
+        <div class='step'>
+            <b>{step['title']}</b><br>
+            {step['explanation']}
+        </div>
+        """
+
+    extra_html = ""
+    if formatted["problem_type"] == "simplify":
+        extra = formatted["extra_info"]
+        extra_html = f"""
+        <div class='step'>
+            <b>Expanded:</b> {extra.get('expanded', '')}<br>
+            <b>Factored:</b> {extra.get('factored', '')}
+        </div>
+        """
+
+    return f"""
+    <div class='result-box'>
+        <h3>{formatted['type_icon']} {formatted['type_label']}</h3>
+
+        <p><b>Source:</b> {formatted['source_label']}</p>
+        <p><b>Input:</b> {formatted['original_input']}</p>
+        <p><b>Answer:</b> {formatted['answer']}</p>
+
+        {extra_html}
+
+        {steps_html}
+    </div>
+    """
+
+
+@app.route("/back")
+def back():
+    """Optional route (not needed for AJAX UI)."""
+    return redirect(url_for("index"))
+
+
+# --- Error HTML Helper ---
+def error_html(message):
+    return f"""
+    <div class='result-box' style='color:red;'>
+        <b>⚠️ Error:</b> {message}
+    </div>
+    """
+
+
+# --- Run App ---
+if __name__ == "__main__":
+    print("🚀 Math Solver running at: http://127.0.0.1:5000")
+    app.run(debug=True)
+  //formatter.py
+TYPE_LABELS = {
+    "equation": "Algebraic Equation",
+    "derivative": "Derivative",
+    "integral": "Indefinite Integral",
+    "simplify": "Expression Simplification",
+    "evaluate": "Expression Evaluation",
+    "error": "Error",
+}
+
+# Emoji icons for each problem type (makes output friendlier)
+TYPE_ICONS = {
+    "equation": "⚖️",
+    "derivative": "📈",
+    "integral": "∫",
+    "evaluate": "📊",
+    "simplify": "🔢",
+    "error": "⚠️",
+}
+
+# Short descriptions explaining each type to beginners
+TYPE_DESCRIPTIONS = {
+    "equation": (
+        "An algebraic equation contains an '=' sign and we solve it by "
+        "finding the value of the unknown variable (like x) that makes both sides equal."
+    ),
+    "derivative": (
+        "A derivative measures how fast a function changes at any point. "
+        "It is the foundation of calculus and used in physics, economics, and engineering."
+    ),
+    "integral": (
+        "An integral is the reverse of a derivative. It finds the area under a curve "
+        "or accumulates quantities. We add '+ C' because many functions share the same derivative."
+    ),
+    "simplify": (
+        "Simplification rewrites an expression in its most compact or useful form. "
+        "We can expand (open brackets), factor (group terms), or reduce the expression."
+    ),
+    "evaluate": (
+        "Evaluation substitutes given variable values into an expression and computes the result. "
+        "This is useful for questions like 'if a=9, b=6, what is 2a+6b'."
+    ),
+    "error": (
+        "Something went wrong while solving the problem. "
+        "Please check your input format and try again."
+    ),
+}
+
+
+def format_result(result_data, original_input, source):
+    """
+    Takes raw solver output and formats it into a dictionary
+    ready for rendering in the result.html template.
+
+    Parameters:
+        result_data  (dict): Output from solver.py
+        original_input (str): The original expression the user typed or the OCR output
+        source       (str): 'text' or 'image' — how the input was received
+
+    Returns:
+        dict: Formatted data for the template
+    """
+    problem_type = result_data.get("type", "error")
+
+    # Get a friendly label and icon for this type
+    label = TYPE_LABELS.get(problem_type, "Unknown")
+    icon = TYPE_ICONS.get(problem_type, "❓")
+    description = TYPE_DESCRIPTIONS.get(problem_type, "")
+
+    # Clean the answer for display
+    raw_answer = result_data.get("answer", "No answer")
+    display_answer = clean_answer(raw_answer, problem_type)
+
+    # Source label: how did the problem arrive?
+    source_label = "📷 Extracted from Image" if source == "image" else "⌨️ Typed by User"
+
+    # Get steps list (each step has 'title' and 'explanation')
+    steps = result_data.get("steps", [])
+
+    # Extra info for simplification problems
+    extra_info = {}
+    if problem_type == "simplify":
+        extra_info = {
+            "expanded": result_data.get("expanded", ""),
+            "factored": result_data.get("factored", ""),
+        }
+
+    # Check if there was an error
+    error_message = result_data.get("error", None)
+
+    # Put everything together in one dictionary
+    formatted = {
+        "original_input": original_input,
+        "source_label": source_label,
+        "problem_type": problem_type,
+        "type_label": label,
+        "type_icon": icon,
+        "type_description": description,
+        "expression": result_data.get("expression", original_input),
+        "answer": display_answer,
+        "steps": steps,
+        "extra_info": extra_info,
+        "error_message": error_message,
+        "has_steps": len(steps) > 0,
+    }
+
+    return formatted
+
+
+def clean_answer(answer_str, problem_type):
+    """
+    Clean and format the raw answer string for better readability.
+    """
+    if not answer_str:
+        return "No answer"
+
+    answer_str = str(answer_str)
+
+    # For equations, format list answers like [3] → x = 3
+    if problem_type == "equation":
+        # Remove square brackets from list representation
+        answer_str = answer_str.strip("[]")
+        if "," in answer_str:
+            # Multiple solutions
+            solutions = [s.strip() for s in answer_str.split(",")]
+            answer_str = " or ".join([f"x = {s}" for s in solutions])
+        else:
+            answer_str = f"x = {answer_str.strip()}"
+
+    # Replace ** with ^ for display (more readable)
+    answer_str = answer_str.replace("**", "^")
+
+    # Replace * with · for cleaner display
+    answer_str = answer_str.replace("*", "·")
+
+    return answer_str
+
+
+def format_expression_for_display(expr_str):
+    """
+    Format a SymPy expression string for user-friendly display.
+    Replaces internal SymPy syntax with readable math notation.
+    """
+    if not expr_str:
+        return ""
+
+    expr_str = str(expr_str)
+    expr_str = expr_str.replace("**", "^")
+    expr_str = expr_str.replace("*", "·")
+
+    return expr_str
+//image_reader.py
+import re
+from PIL import Image
+
+
+def extract_math_from_image(image_path):
+    """
+    Main function: open the image and extract math text from it.
+    Tries pytesseract first, falls back to easyocr if not available.
+
+    Parameters:
+        image_path (str): Path to the uploaded image file.
+
+    Returns:
+        str: Cleaned math expression extracted from the image.
+    """
+    # Open the image with Pillow
+    try:
+        img = Image.open(image_path)
+    except Exception as e:
+        return f"Error opening image: {str(e)}"
+
+    # Try pytesseract first (most common OCR tool)
+    raw_text = try_pytesseract(img)
+
+    # If pytesseract fails or gives empty result, try easyocr
+    if not raw_text or raw_text.strip() == "":
+        raw_text = try_easyocr(image_path)
+
+    # If still nothing, return an error message
+    if not raw_text or raw_text.strip() == "":
+        return ""
+
+    # Clean the extracted text so the solver can understand it
+    cleaned = clean_math_text(raw_text)
+    return cleaned
+
+
+def try_pytesseract(img):
+    """
+    Try to extract text using pytesseract.
+    Returns the extracted text, or empty string if pytesseract is not available.
+    """
+    try:
+        import pytesseract
+
+        # Preprocess: convert to grayscale to improve OCR accuracy
+        gray_img = img.convert("L")
+
+        # Use pytesseract to extract text
+        # config: treat the image as a single line of text (good for math)
+        custom_config = r"--oem 3 --psm 7"
+        text = pytesseract.image_to_string(gray_img, config=custom_config)
+
+        return text.strip()
+
+    except ImportError:
+        # pytesseract is not installed
+        return ""
+    except Exception as e:
+        # Some other error occurred
+        print(f"pytesseract error: {e}")
+        return ""
+
+
+def try_easyocr(image_path):
+    """
+    Try to extract text using easyocr (a deep-learning based OCR).
+    Returns the extracted text, or empty string if easyocr is not available.
+    """
+    try:
+        import easyocr
+
+        # Initialize the reader for English
+        # gpu=False means it runs on CPU (safer for most systems)
+        reader = easyocr.Reader(["en"], gpu=False)
+
+        # Read text from the image file path
+        results = reader.readtext(image_path, detail=0)
+
+        # Join all detected text pieces together
+        text = " ".join(results)
+        return text.strip()
+
+    except ImportError:
+        # easyocr is not installed
+        return ""
+    except Exception as e:
+        print(f"easyocr error: {e}")
+        return ""
+
+
+def clean_math_text(raw_text):
+    """
+    Clean and normalize the raw OCR output to make it usable by the math solver.
+    OCR often makes small mistakes in math symbols, so we fix common ones.
+
+    Parameters:
+        raw_text (str): The raw string from OCR.
+
+    Returns:
+        str: Cleaned, solver-friendly math expression.
+    """
+    text = raw_text.strip()
+
+    # Remove newlines and extra spaces
+    text = text.replace("\n", " ").replace("\r", " ")
+    text = re.sub(r"\s+", " ", text)
+
+    # Fix common OCR errors in math:
+    text = text.replace("×", "*")    # Multiplication symbol → *
+    text = text.replace("÷", "/")    # Division symbol → /
+    text = text.replace("²", "**2")  # Superscript 2 → **2
+    text = text.replace("³", "**3")  # Superscript 3 → **3
+    text = text.replace("√", "sqrt") # Square root symbol
+    text = text.replace("π", "pi")   # Pi symbol
+    text = text.replace("∫", "integrate(") # Integral symbol (partial fix)
+
+    # Fix common letter-vs-number OCR confusion:
+    # OCR often reads 'l' (letter L) as '1' in math context
+    # and '0' as 'O' (letter O)
+    # We do a conservative replacement here
+    text = re.sub(r"\bO\b", "0", text)  # Standalone O → 0
+
+    # Remove stray characters that are not math-related
+    # Keep: digits, letters, +, -, *, /, =, ^, (, ), ., space
+    text = re.sub(r"[^\w\s\+\-\*/\=\^\(\)\.\,]", "", text)
+
+    # Clean up multiple spaces again after replacements
+    text = re.sub(r"\s+", " ", text).strip()
+
+    return text
+
+
+def preprocess_image(img):
+    """
+    Optional: Apply image preprocessing to improve OCR accuracy.
+    Converts to grayscale and increases contrast.
+
+    Parameters:
+        img: A Pillow Image object.
+
+    Returns:
+        img: A preprocessed Pillow Image object.
+    """
+    from PIL import ImageEnhance, ImageFilter
+
+    # Convert to grayscale
+    img = img.convert("L")
+
+    # Increase contrast — helps OCR read math symbols clearly
+    enhancer = ImageEnhance.Contrast(img)
+    img = enhancer.enhance(2.0)
+
+    # Apply sharpening filter
+    img = img.filter(ImageFilter.SHARPEN)
+
+    return img
+  //solver.py
+import sympy as sp
+from steps_generator import generate_steps
+
+
+def parse_expression(expr_str):
+    """
+    Convert a math string into a SymPy expression.
+    Handles common user-friendly syntax like ^ for power, etc.
+    """
+    expr_str = expr_str.replace("^", "**")
+    x, y, z, t = sp.symbols("x y z t")
+    local_dict = {"x": x, "y": y, "z": z, "t": t}
+    expr = sp.sympify(expr_str, locals=local_dict)
+    return expr
+
+
+def detect_problem_type(expr_str):
+    """
+    Detect what kind of math problem the user has entered.
+    Returns: 'equation', 'derivative', 'integral', or 'simplify'
+    """
+    expr_lower = expr_str.lower().strip()
+    if expr_lower.startswith("diff(") or expr_lower.startswith("derivative("):
+        return "derivative"
+    if expr_lower.startswith("integrate(") or expr_lower.startswith("integral("):
+        return "integral"
+    if "=" in expr_str:
+        return "equation"
+    return "simplify"
+
+
+def solve_equation(expr_str):
+    x = sp.Symbol("x")
+    parts = expr_str.split("=")
+    if len(parts) != 2:
+        return {"error": "Invalid equation format. Use format like: 2x + 3 = 11"}
+    lhs_str = parts[0].strip().replace("^", "**")
+    rhs_str = parts[1].strip().replace("^", "**")
+    lhs = sp.sympify(lhs_str, locals={"x": x})
+    rhs = sp.sympify(rhs_str, locals={"x": x})
+    equation = sp.Eq(lhs, rhs)
+    solution = sp.solve(equation, x)
+    steps = generate_steps("equation", lhs=lhs, rhs=rhs, equation=equation, solution=solution)
+    return {
+        "type": "equation",
+        "expression": str(equation),
+        "answer": str(solution),
+        "steps": steps,
+        "sympy_answer": solution,
+    }
+
+
+def solve_derivative(expr_str):
+    x = sp.Symbol("x")
+    inner = ""
+    for keyword in ["diff(", "derivative("]:
+        if expr_str.lower().startswith(keyword):
+            inner = expr_str[len(keyword):].rstrip(")")
+            break
+    if not inner:
+        return {"error": "Could not parse derivative. Use format: diff(x^2)"}
+    inner = inner.replace("^", "**")
+    expr = sp.sympify(inner, locals={"x": x})
+    derivative = sp.diff(expr, x)
+    simplified = sp.simplify(derivative)
+    steps = generate_steps("derivative", expr=expr, result=simplified)
+    return {
+        "type": "derivative",
+        "expression": str(expr),
+        "answer": str(simplified),
+        "steps": steps,
+        "sympy_answer": simplified,
+    }
+
+
+def solve_integral(expr_str):
+    x = sp.Symbol("x")
+    inner = ""
+    for keyword in ["integrate(", "integral("]:
+        if expr_str.lower().startswith(keyword):
+            inner = expr_str[len(keyword):].rstrip(")")
+            break
+    if not inner:
+        return {"error": "Could not parse integral. Use format: integrate(x^3)"}
+    inner = inner.replace("^", "**")
+    expr = sp.sympify(inner, locals={"x": x})
+    integral_result = sp.integrate(expr, x)
+    result_str = str(integral_result) + " + C"
+    steps = generate_steps("integral", expr=expr, result=integral_result)
+    return {
+        "type": "integral",
+        "expression": str(expr),
+        "answer": result_str,
+        "steps": steps,
+        "sympy_answer": integral_result,
+    }
+
+
+def solve_simplify(expr_str):
+    x = sp.Symbol("x")
+    expr_str = expr_str.replace("^", "**")
+    expr = sp.sympify(expr_str, locals={"x": x})
+    expanded = sp.expand(expr)
+    factored = sp.factor(expr)
+    simplified = sp.simplify(expr)
+    steps = generate_steps("simplify", expr=expr, expanded=expanded, factored=factored, simplified=simplified)
+    return {
+        "type": "simplify",
+        "expression": str(expr),
+        "answer": str(simplified),
+        "steps": steps,
+        "expanded": str(expanded),
+        "factored": str(factored),
+        "sympy_answer": simplified,
+    }
+
+
+def solve_math_problem(expr_str):
+    try:
+        problem_type = detect_problem_type(expr_str)
+        if problem_type == "equation":
+            return solve_equation(expr_str)
+        elif problem_type == "derivative":
+            return solve_derivative(expr_str)
+        elif problem_type == "integral":
+            return solve_integral(expr_str)
+        else:
+            return solve_simplify(expr_str)
+    except Exception as e:
+        return {
+            "type": "error",
+            "expression": expr_str,
+            "answer": "Could not solve",
+            "error": f"Error: {str(e)}. Please check your input format.",
+            "steps": [],
+        }
+//steps_generator.py
+import sympy as sp
+
+
+def generate_steps(problem_type, **kwargs):
+    """
+    Main function: based on the problem type, call the right step generator.
+    Returns a list of step dictionaries with 'title' and 'explanation'.
+    """
+    if problem_type == "equation":
+        return steps_for_equation(**kwargs)
+    elif problem_type == "derivative":
+        return steps_for_derivative(**kwargs)
+    elif problem_type == "integral":
+        return steps_for_integral(**kwargs)
+    elif problem_type == "evaluate":
+        return steps_for_evaluate(**kwargs)
+    elif problem_type == "simplify":
+        return steps_for_simplify(**kwargs)
+    else:
+        return [{"title": "Result", "explanation": "Problem solved."}]
+
+
+def steps_for_equation(lhs, rhs, equation, solution, **kwargs):
+    """
+    Generate step-by-step explanation for solving an equation.
+    Example: 2x + 3 = 11
+    """
+    steps = []
+    x = sp.Symbol("x")
+
+    # Step 1: Write the original equation
+    steps.append({
+        "title": "Step 1: Write Down the Equation",
+        "explanation": f"We start with the equation: {lhs} = {rhs}"
+    })
+
+    # Step 2: Move terms to one side
+    difference = sp.expand(lhs - rhs)
+    steps.append({
+        "title": "Step 2: Rearrange – Bring Everything to One Side",
+        "explanation": (
+            f"Subtract the right side from the left side:\n"
+            f"  ({lhs}) - ({rhs}) = 0\n"
+            f"  {difference} = 0"
+        )
+    })
+
+    # Step 3: Identify the variable
+    free_vars = list(equation.free_symbols)
+    var_name = str(free_vars[0]) if free_vars else "x"
+    steps.append({
+        "title": f"Step 3: Identify the Variable",
+        "explanation": f"We are solving for the variable: {var_name}"
+    })
+
+    # Step 4: Apply algebraic rules
+    steps.append({
+        "title": "Step 4: Apply Algebraic Rules",
+        "explanation": (
+            "Use inverse operations to isolate the variable:\n"
+            "  - If a number is added, subtract it from both sides.\n"
+            "  - If a number is multiplied, divide both sides by it."
+        )
+    })
+
+    # Step 5: Show the solution
+    if solution:
+        sol_str = ", ".join([str(s) for s in solution])
+        steps.append({
+            "title": "Step 5: Final Solution",
+            "explanation": f"Solving gives us: {var_name} = {sol_str}"
+        })
+
+        # Step 6: Verify by substitution
+        if len(solution) == 1:
+            check_val = solution[0]
+            lhs_val = lhs.subs(x, check_val)
+            rhs_val = rhs.subs(x, check_val) if hasattr(rhs, "subs") else rhs
+            steps.append({
+                "title": "Step 6: Verify the Answer",
+                "explanation": (
+                    f"Substitute {var_name} = {check_val} back into the equation:\n"
+                    f"  Left side: {lhs} → {lhs_val}\n"
+                    f"  Right side: {rhs}\n"
+                    f"  {lhs_val} = {rhs_val} ✓ Verified!"
+                )
+            })
+    else:
+        steps.append({
+            "title": "Step 5: Result",
+            "explanation": "No real solution found for this equation."
+        })
+
+    return steps
+
+
+def steps_for_derivative(expr, result, **kwargs):
+    """
+    Generate step-by-step explanation for finding a derivative.
+    Example: diff(x^2 + 3x)
+    """
+    steps = []
+
+    # Step 1: State the problem
+    steps.append({
+        "title": "Step 1: Identify the Function",
+        "explanation": f"We need to differentiate: f(x) = {expr}"
+    })
+
+    # Step 2: Explain differentiation rules
+    steps.append({
+        "title": "Step 2: Recall the Differentiation Rules",
+        "explanation": (
+            "Key rules used for differentiation:\n"
+            "  • Power Rule: d/dx (xⁿ) = n·xⁿ⁻¹\n"
+            "  • Constant Rule: d/dx (c) = 0\n"
+            "  • Sum Rule: d/dx (f + g) = f' + g'\n"
+            "  • Product Rule: d/dx (f·g) = f'g + fg'"
+        )
+    })
+
+    # Step 3: Break down the expression (check if it's additive)
+    terms = sp.Add.make_args(sp.expand(expr))
+    if len(terms) > 1:
+        term_steps = []
+        for term in terms:
+            d_term = sp.diff(term, sp.Symbol("x"))
+            term_steps.append(f"  d/dx({term}) = {d_term}")
+        steps.append({
+            "title": "Step 3: Differentiate Each Term Separately",
+            "explanation": "Using the Sum Rule, we differentiate each term:\n" + "\n".join(term_steps)
+        })
+    else:
+        steps.append({
+            "title": "Step 3: Apply the Power Rule",
+            "explanation": f"Apply differentiation rules to: {expr}"
+        })
+
+    # Step 4: Show the final derivative
+    steps.append({
+        "title": "Step 4: Write the Final Derivative",
+        "explanation": f"Combining all terms, the derivative is:\n  f'(x) = {result}"
+    })
+
+    # Step 5: Interpretation
+    steps.append({
+        "title": "Step 5: What This Means",
+        "explanation": (
+            f"The derivative f'(x) = {result} tells us the rate of change of the function.\n"
+            "It shows how fast the function value changes as x changes."
+        )
+    })
+
+    return steps
+
+
+def steps_for_integral(expr, result, **kwargs):
+    """
+    Generate step-by-step explanation for computing an integral.
+    Example: integrate(x^3)
+    """
+    steps = []
+
+    # Step 1: State the problem
+    steps.append({
+        "title": "Step 1: Identify the Function to Integrate",
+        "explanation": f"We need to find the integral of: f(x) = {expr}"
+    })
+
+    # Step 2: Recall integration rules
+    steps.append({
+        "title": "Step 2: Recall the Integration Rules",
+        "explanation": (
+            "Key rules used for integration:\n"
+            "  • Power Rule: ∫xⁿ dx = xⁿ⁺¹/(n+1) + C\n"
+            "  • Constant Rule: ∫c dx = cx + C\n"
+            "  • Sum Rule: ∫(f + g) dx = ∫f dx + ∫g dx\n"
+            "  • C is the constant of integration"
+        )
+    })
+
+    # Step 3: Break down the expression
+    terms = sp.Add.make_args(sp.expand(expr))
+    if len(terms) > 1:
+        term_steps = []
+        for term in terms:
+            i_term = sp.integrate(term, sp.Symbol("x"))
+            term_steps.append(f"  ∫({term}) dx = {i_term}")
+        steps.append({
+            "title": "Step 3: Integrate Each Term Separately",
+            "explanation": "Using the Sum Rule, we integrate each term:\n" + "\n".join(term_steps)
+        })
+    else:
+        steps.append({
+            "title": "Step 3: Apply the Power Rule",
+            "explanation": (
+                f"For the expression {expr}, increase the power by 1 "
+                "and divide by the new power."
+            )
+        })
+
+    # Step 4: Combine and add C
+    steps.append({
+        "title": "Step 4: Combine Terms and Add Constant C",
+        "explanation": (
+            f"Combining all integrated terms:\n"
+            f"  ∫({expr}) dx = {result} + C\n"
+            "Don't forget '+ C' — it represents an unknown constant."
+        )
+    })
+
+    # Step 5: Verification by differentiation
+    x = sp.Symbol("x")
+    verify = sp.diff(result, x)
+    simplified_verify = sp.simplify(verify - sp.expand(expr))
+    is_correct = simplified_verify == 0
+
+    steps.append({
+        "title": "Step 5: Verify by Differentiating the Result",
+        "explanation": (
+            f"To check, differentiate the answer:\n"
+            f"  d/dx({result} + C) = {verify}\n"
+            f"  This equals our original function: {expr} {'✓' if is_correct else '(check manually)'}"
+        )
+    })
+
+    return steps
+
+
+def steps_for_evaluate(expr, assignments, substituted, result, **kwargs):
+    """
+    Generate step-by-step explanation for an evaluation problem.
+    """
+    steps = []
+
+    # Step 1: Show the given assignments
+    assignment_lines = [f"{name} = {value}" for name, value in assignments.items()]
+    steps.append({
+        "title": "Step 1: Read the Given Values",
+        "explanation": "We are given:\n  " + "\n  ".join(assignment_lines)
+    })
+
+    # Step 2: State the expression to evaluate
+    steps.append({
+        "title": "Step 2: Identify the Expression",
+        "explanation": f"We need to evaluate: {expr}"
+    })
+
+    # Step 3: Substitute the values
+    steps.append({
+        "title": "Step 3: Substitute the Values",
+        "explanation": f"Replace each variable with its value:\n  {substituted}"
+    })
+
+    # Step 4: Compute the final result
+    steps.append({
+        "title": "Step 4: Compute the Result",
+        "explanation": f"The evaluated result is:\n  {result}"
+    })
+
+    return steps
+
+
+def steps_for_simplify(expr, expanded, factored, simplified, **kwargs):
+    """
+    Generate step-by-step explanation for simplifying an expression.
+    Example: (x^2 + 2x + 1)
+    """
+    steps = []
+
+    # Step 1: State the expression
+    steps.append({
+        "title": "Step 1: Write Down the Expression",
+        "explanation": f"We start with the expression: {expr}"
+    })
+
+    # Step 2: Expand the expression
+    steps.append({
+        "title": "Step 2: Expand the Expression",
+        "explanation": (
+            f"Expanding (removing brackets by multiplying terms):\n"
+            f"  {expr} → {expanded}"
+        )
+    })
+
+    # Step 3: Factor the expression
+    steps.append({
+        "title": "Step 3: Factor the Expression",
+        "explanation": (
+            f"Factoring (writing as a product of simpler terms):\n"
+            f"  {expr} → {factored}"
+        )
+    })
+
+    # Step 4: Simplify
+    steps.append({
+        "title": "Step 4: Simplified Form",
+        "explanation": (
+            f"The simplified form of the expression is:\n"
+            f"  {simplified}"
+        )
+    })
+
+    # Step 5: What to use when
+    steps.append({
+        "title": "Step 5: Summary of Forms",
+        "explanation": (
+            f"  • Original: {expr}\n"
+            f"  • Expanded (all terms visible): {expanded}\n"
+            f"  • Factored (compact form): {factored}\n"
+            f"  • Simplified: {simplified}\n\n"
+            "Use expanded form for addition/subtraction.\n"
+            "Use factored form to find roots (where the expression = 0)."
+        )
+    })
+
+    return steps
+  
