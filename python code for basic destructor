@@ -1,0 +1,19 @@
+class Student:
+    def __init__(self, age, name):
+        self.name = name
+        self.age = age
+    def getdata(self):
+        print("Name:", self.name)
+        print("Age:", self.age)
+    def putdata(self):
+        print("Displaying:", self.name, "-", self.age)
+    def __del__(self):
+        print(f"Destructor called for {self.name}")
+s1 = Student(56, "Aditya")
+s2 = Student(23, "Hemant")
+s1.getdata()
+s1.putdata()
+s2.getdata()
+s2.putdata()
+del s1
+del s2
