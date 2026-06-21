@@ -1,0 +1,59 @@
+import numpy as np
+arr_1d = np.array([1, 2, 3, 4, 5])
+arr_2d = np.array([[1, 2, 3], [4, 5, 6]])
+zeros = np.zeros((2, 3))            # Matrix filled with 0.0
+ones = np.ones((3, 2), dtype=int)   # Matrix filled with 1
+identity = np.eye(3)                # 3x3 Identity matrix
+ranges = np.arange(0, 10, 2)        # [0, 2, 4, 6, 8]
+linear_space = np.linspace(0, 1, 5) # 5 evenly spaced valu
+shape = arr_2d.shape                # Dimensions: (2, 3)
+dims = arr_2d.ndim                  # Number of dimensions: 2
+size = arr_2d.size                  # Total elements: 6
+datatype = arr_2d.dtype             # Data type (e.g., int64)
+element = arr_2d[1, 2]              # Access row 1, col 2 -> 6
+row_slice = arr_2d[0, :]            # First row -> [1, 2, 3]
+col_slice = arr_2d[:, 1]            # Second column -> [2, 5]
+# Boolean Masking (Filtering)
+mask = arr_1d > 3                   # [False, False, False, True, True]
+filtered_arr = arr_1d[mask]        
+a = np.array([10, 20, 30])
+b = np.array([1, 2, 3])
+add_op = np.add(a, b)              # Or a + b -> [11, 22, 33]
+sub_op = np.subtract(a, b)         # Or a - b -> [9, 18, 27]
+mul_op = np.multiply(a, b)         # Or a * b -> [10, 40, 90]
+div_op = np.divide(a, b)           # Or a / b -> [10.0, 10.0, 10.0]
+pwr_op = np.power(b, 2)            # Or b ** 2 -> [1, 4, 9]
+flat_arr = np.arange(6)             # [0, 1, 2, 3, 4, 5]
+reshaped = flat_arr.reshape((2, 3)) # Convert to 2x3 matrix
+transposed = reshaped.T             # Swap axes -> 3x2 matrix
+# Joining and Splitting
+arr_v1 = np.array([1, 2])
+arr_v2 = np.array([3, 4])
+v_stack = np.vstack((arr_v1, arr_v2)) # Vertical stack
+h_stack = np.hstack((arr_v1, arr_v2)) # Horizontal stack
+# Flattening
+flat_back = reshaped.ravel()        # Flattens back to 1D array
+matrix = np.array([[1, 2], [3, 4]])
+total_sum = np.sum(matrix)          # Sum of all elements -> 10
+col_sum = np.sum(matrix, axis=0)    # Sum along columns -> [4, 6]
+row_sum = np.sum(matrix, axis=1)    # Sum along rows -> [3, 7]
+mean_val = np.mean(matrix)          # Mean average -> 2.5
+std_deviation = np.std(matrix)      # Standard deviation
+max_val = np.max(matrix)            # Maximum value -> 4
+min_idx = np.argmin(matrix)         # Index of minimum value -> 0
+m1 = np.array([[1, 2], [3, 4]])
+m2 = np.array([[5, 6], [7, 8]])
+matrix_mul = np.dot(m1, m2)         # Or m1 @ m2
+determinant = np.linalg.det(m1)     # Matrix determinant
+inverse = np.linalg.inv(m1)         # Multiplicative inverse matrix
+sqrt_arr = np.sqrt(a)               # Square root of elements
+exp_arr = np.exp(b)                 # Exponential e^x
+sin_arr = np.sin(b)                 # Trigonometric sine
+# Logic validations
+all_true = np.all(a > 5)            # Checks if ALL items fulfill status -> True
+any_true = np.any(a > 25)           # Checks if ANY item fulfills status -> True
+set_a = np.array([1, 2, 3, 4])
+set_b = np.array([3, 4, 5, 6])
+intersect = np.intersect1d(set_a, set_b) # Shared items -> [3, 4]
+union = np.union1d(set_a, set_b)         # All unique items -> [1, 2, 3, 4, 5, 6]
+unique_vals = np.unique([1, 1, 2, 3, 3]) # Deduplicate -> [1, 2, 3]
