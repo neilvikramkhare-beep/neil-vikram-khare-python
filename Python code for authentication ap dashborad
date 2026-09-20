@@ -1,0 +1,62 @@
+from flask import Flask, request, session
+import secrets
+
+app = Flask(__name__)
+app.secret_key = "LAB-ONLY-SECRET"
+
+users = {
+    "testuser": {
+        "password": "Password123!",
+        "otp": "123456"
+    }
+}
+
+@app.route("/")
+def index():
+    return """
+    <h1>Telegram-Like Security Lab</h1>
+    <form method="POST" action="/login">
+        <input name="username" placeholder="Username">
+        <input name="password" type="password" placeholder="Password">
+        <button>Login</button>
+    </form>
+    """
+
+@app.route("/login", methods=["POST"])
+def login():
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    user = users.get(username)
+
+    if user and user["password"] == password:
+        session["pending_user"] = username
+        return """
+        <form method="POST" action="/verify">
+            <input name="otp" placeholder="OTP">
+            <button>Verify</button>
+        </form>
+        """
+
+    return "Invalid credentials", 401
+
+@app.route("/verify", methods=["POST"])
+def verify():
+    username = session.get("pending_user")
+    otp = request.form.get("otp")
+
+    if username and users[username]["otp"] == otp:
+        session["authenticated"] = True
+        return "Authenticated laboratory account"
+
+    return "Invalid OTP", 401
+
+@app.route("/profile")
+def profile():
+    if not session.get("authenticated"):
+        return "Authentication required", 401
+
+    return "Private laboratory profile"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
